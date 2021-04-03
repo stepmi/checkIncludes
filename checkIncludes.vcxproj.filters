@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\parser">
+      <UniqueIdentifier>{2a0567fe-31f3-4a18-b9fb-96cad1b91a97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tools">
+      <UniqueIdentifier>{8eddc9be-5f24-4a3c-be67-d62bd47fb7ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\system">
+      <UniqueIdentifier>{ea235236-e85d-44a5-8b87-2c75ac4b1ba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\main">
+      <UniqueIdentifier>{412ae1ac-d7c6-4966-8084-5c13beec27e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\msvc">
+      <UniqueIdentifier>{7ec3e340-ad35-4d17-a00c-665264bc53ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc">
+      <UniqueIdentifier>{52c5c849-56b8-4e22-a94c-1ebb7418a8f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\projectFile">
+      <UniqueIdentifier>{ef112dcf-f99b-4f4d-a0ab-00061af859e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\compileFile">
+      <UniqueIdentifier>{216d7492-5264-4901-beed-48a1486eb578}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\xml">
+      <UniqueIdentifier>{334e350d-3816-4bba-aaea-572a07ce86a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\msvc">
+      <UniqueIdentifier>{ee8dce88-1065-4df2-a976-75a1647cd89e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\parser">
+      <UniqueIdentifier>{68c7473a-1d9b-44d7-9d9f-a142de49703b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\compiler">
+      <UniqueIdentifier>{c55b513c-53cb-49de-acfd-677074200980}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\compiler">
+      <UniqueIdentifier>{8b3af9f5-72e5-4859-8045-d2508d87717b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\tools">
+      <UniqueIdentifier>{49758136-cd5b-4fdb-9e83-398b623b7938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\main">
+      <UniqueIdentifier>{2ace1e76-bac2-47f1-a2f2-18cfc49ec947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inc\system">
+      <UniqueIdentifier>{0216b21f-a97e-4946-815c-406b8744dbb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\projectFile">
+      <UniqueIdentifier>{fba04c39-c93e-4069-a8e3-7de0cc571d10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\compileFile">
+      <UniqueIdentifier>{3547a758-d1d7-4b13-b1f4-509ed1915f3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\xml">
+      <UniqueIdentifier>{73ff6070-57b8-4759-901b-a64a41b288b0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\parser\tokens.cpp">
+      <Filter>Source Files\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="src\parser\state.cpp">
+      <Filter>Source Files\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="src\parser\parser.cpp">
+      <Filter>Source Files\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tools\strings.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tools\filesystem.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\exit.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\logger.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main\main.cpp">
+      <Filter>Source Files\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\msvc\CMsProjectFile.cpp">
+      <Filter>Source Files\msvc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\msvc\CMsProjectFileQuery.cpp">
+      <Filter>Source Files\msvc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\msvc\CMsProject.cpp">
+      <Filter>Source Files\msvc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\msvc\CMsCompiler.cpp">
+      <Filter>Source Files\msvc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler\createCompiler.cpp">
+      <Filter>Source Files\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main\commandline.cpp">
+      <Filter>Source Files\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectFile\checkProject.cpp">
+      <Filter>Source Files\projectFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectFile\threadpoolImpl.cpp">
+      <Filter>Source Files\projectFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compileFile\CIncludeFileIgnore.cpp">
+      <Filter>Source Files\compileFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compileFile\CIncludeFile.cpp">
+      <Filter>Source Files\compileFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectFile\setConfiguration.cpp">
+      <Filter>Source Files\projectFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\projectFile\getCompileFiles.cpp">
+      <Filter>Source Files\projectFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\xml\tinyxml2.cpp">
+      <Filter>Source Files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\xml\xmlUtils.cpp">
+      <Filter>Source Files\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compileFile\checkCompileFile.cpp">
+      <Filter>Source Files\compileFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compileFile\readCompileFile.cpp">
+      <Filter>Source Files\compileFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compileFile\CCompileFile.cpp">
+      <Filter>Source Files\compileFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compileFile\filterIncludes.cpp">
+      <Filter>Source Files\compileFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compileFile\cloneProject.cpp">
+      <Filter>Source Files\compileFile</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tools\filename.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\parser\state.h">
+      <Filter>Source Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\parser\tokens.h">
+      <Filter>Source Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\msvc\MsProjectDefs.h">
+      <Filter>Source Files\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compileFile\compileFile.h">
+      <Filter>Source Files\inc\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\projectFile\projectFile.h">
+      <Filter>Source Files\inc\projectFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\xml\xmlUtils.h">
+      <Filter>Source Files\inc\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\xml\tinyxml2.h">
+      <Filter>Source Files\inc\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\msvc\CMsProjectFile.h">
+      <Filter>Source Files\inc\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\msvc\CMsProjectFileQuery.h">
+      <Filter>Source Files\inc\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\msvc\CMsCompiler.h">
+      <Filter>Source Files\inc\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\msvc\CMsProject.h">
+      <Filter>Source Files\inc\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\parser\parser.h">
+      <Filter>Source Files\inc\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compiler\createCompiler.h">
+      <Filter>Source Files\inc\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compiler\ICompiler.h">
+      <Filter>Source Files\inc\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compileFile\ICompileFile.h">
+      <Filter>Source Files\inc\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\tools\interface.h">
+      <Filter>Source Files\inc\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\tools\find.h">
+      <Filter>Source Files\inc\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\tools\filesystem.h">
+      <Filter>Source Files\inc\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\tools\strings.h">
+      <Filter>Source Files\inc\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\tools\platforms.h">
+      <Filter>Source Files\inc\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compileFile\includeFileHandle.h">
+      <Filter>Source Files\inc\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\main\CParameters.h">
+      <Filter>Source Files\inc\main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\main\CProjectConfiguration.h">
+      <Filter>Source Files\inc\main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\main\ECompilerType.h">
+      <Filter>Source Files\inc\main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\main\EOption.h">
+      <Filter>Source Files\inc\main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\system\exit.h">
+      <Filter>Source Files\inc\system</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\system\logger.h">
+      <Filter>Source Files\inc\system</Filter>
+    </ClInclude>
+    <ClInclude Include="src\main\commandline.h">
+      <Filter>Source Files\main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\projectFile\IProject.h">
+      <Filter>Source Files\inc\projectFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectFile\threadpool.h">
+      <Filter>Source Files\projectFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectFile\threadpoolImpl.h">
+      <Filter>Source Files\projectFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compileFile\CIncludeFileIgnore.h">
+      <Filter>Source Files\inc\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compileFile\CFilePos.h">
+      <Filter>Source Files\inc\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectFile\setConfiguration.h">
+      <Filter>Source Files\projectFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\projectFile\getCompileFiles.h">
+      <Filter>Source Files\projectFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compileFile\CIncludeFile.h">
+      <Filter>Source Files\inc\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compileFile\readCompileFile.h">
+      <Filter>Source Files\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compileFile\CCompileFile.h">
+      <Filter>Source Files\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compileFile\filterIncludes.h">
+      <Filter>Source Files\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compileFile\cloneProject.h">
+      <Filter>Source Files\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\projectFile\IThread.h">
+      <Filter>Source Files\inc\projectFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\tools\filename.h">
+      <Filter>Source Files\inc\tools</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\main\CMakeLists.txt">
+      <Filter>Source Files\main</Filter>
+    </Text>
+    <Text Include="src\compileFile\CMakeLists.txt">
+      <Filter>Source Files\compileFile</Filter>
+    </Text>
+    <Text Include="src\compiler\CMakeLists.txt">
+      <Filter>Source Files\compiler</Filter>
+    </Text>
+    <Text Include="src\msvc\CMakeLists.txt">
+      <Filter>Source Files\msvc</Filter>
+    </Text>
+    <Text Include="src\parser\CMakeLists.txt">
+      <Filter>Source Files\parser</Filter>
+    </Text>
+    <Text Include="src\projectFile\CMakeLists.txt">
+      <Filter>Source Files\projectFile</Filter>
+    </Text>
+    <Text Include="src\system\CMakeLists.txt">
+      <Filter>Source Files\system</Filter>
+    </Text>
+    <Text Include="src\tools\CMakeLists.txt">
+      <Filter>Source Files\tools</Filter>
+    </Text>
+    <Text Include="src\xml\CMakeLists.txt">
+      <Filter>Source Files\xml</Filter>
+    </Text>
+    <Text Include="src\CMakeLists.txt" />
+  </ItemGroup>
+</Project>
