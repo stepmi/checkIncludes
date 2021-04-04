@@ -1,19 +1,19 @@
 #include "filterIncludes.h"
 #include "tools/strings.h"
 #include <mutex>
-
+#include <algorithm>
 
 namespace compileFile
 {
 	std::mutex mutex_includesToIgnore;
 
 	void filterIncludesByIncludesToIgnore(const std::string &a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore, INCLUDES &a_includes)
-	{		
+	{
 		std::lock_guard<std::mutex> guard(mutex_includesToIgnore);
 		for (auto it = a_includes.begin(); it != a_includes.end(); )
 		{
 			const CInclude &include = *it;
-			bool bIgnore = false;	
+			bool bIgnore = false;
 			{
 				auto itIncludeToIgnore = std::find(a_includesToIgnore.begin(), a_includesToIgnore.end(), include);
 				if (itIncludeToIgnore != a_includesToIgnore.end())
@@ -38,19 +38,19 @@ namespace compileFile
 		for (auto it = a_includes.begin(); it != a_includes.end(); )
 		{
 			const CInclude &include = *it;
-			
-			const platform::string sIncludeFileNamePure = STRING_TO_PLATFORM(include.getFile()).stem();			
+
+			const platform::string sIncludeFileNamePure = STRING_TO_PLATFORM(include.getFile()).stem();
 			if (tools::strings::strCompareCaseInsensitive(sCompileFileNamePure, sIncludeFileNamePure))
 				it = a_includes.erase(it);
 			else
-				it++;				
+				it++;
 		}
 	}
 
 	void filterIncludes(const std::string &a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore, INCLUDES &a_includes)
 	{
 		if (!a_includes.empty())
-		{			
+		{
 			filterIncludesByIncludesToIgnore(a_sCompileFile, a_includesToIgnore, a_includes);
 
 			// very likely a file which is named the same as the compile file should never be removed.
@@ -62,6 +62,6 @@ namespace compileFile
 		}
 	}
 
-	
+
 
 }
