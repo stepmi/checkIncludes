@@ -18,16 +18,23 @@ namespace compileFile
 		const std::string &getFile() const override { return m_sCompileFile; } // the original filename
 		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }
 		void switchOffIncludeStdAfx();
-
+		
 		INCLUDE_HANDLES getIncludes() const override;		
 		const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const override;
 		bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) override;
-		
+		bool addMarkersForPreProcess() override;
+		bool removeMarkersForPreProcess() override;
+		void filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile) override;
 		
 	private:
 
 		platform::string getFilePath() const;
+
+		CInclude *getInclude(const HANDLE_INCLUDE a_hInclude);
+		void offsetIncludesAfter(const HANDLE_INCLUDE a_hInclude, const int a_iOffset);
 		bool switchIncludeInSrcAndFile(const CInclude &a_include, const bool a_bSwitchOn);
+		bool switchMarkersForPreProcess(const bool a_bSwitchOn);
+		void switchMarkerForPreProcessInSrc(const CInclude &a_include, const bool a_bSwitchOn);
 		
 	private:
 		platform::string m_wsProjectFile;

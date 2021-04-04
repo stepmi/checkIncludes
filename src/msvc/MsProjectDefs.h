@@ -18,6 +18,7 @@ namespace msvc
 		static const std::string sTagClCompile = "ClCompile";
 			static const std::string sTagAdditionalOptions = "AdditionalOptions";
 			static const std::string sTagPrecompiledHeader = "PrecompiledHeader";
+			static const std::string sTagPreprocessToFile = "PreprocessToFile";
 			static const std::string sTagProgramDataBaseFileName = "ProgramDataBaseFileName";
 	static const std::string sTagItemGroup = "ItemGroup";
 		//static const std::string sTagClCompile = "ClCompile";

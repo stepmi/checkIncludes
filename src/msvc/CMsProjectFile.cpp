@@ -76,7 +76,21 @@ namespace msvc
 		return false;
 	}
 
-	std::string CMsProjectFile::getIntermediateDirectory(const std::string &a_sCompileFile) const
+	bool CMsProjectFile::switchPreProcessOnly(const bool a_bOn)
+	{
+		auto  *pElementItemDefinitionGroup = findOrAddGroupWithCondition(sTagItemDefinitionGroup);
+		if (pElementItemDefinitionGroup)
+		{
+			auto *pElementClCompile = findOrAddElement(*pElementItemDefinitionGroup, sTagClCompile, &std::string(), "");
+			if (pElementClCompile)
+			{
+				return findOrAddElement(*pElementClCompile, sTagPreprocessToFile, nullptr, a_bOn ? "true" : "false");
+			}
+		}		
+		return false;
+	}
+
+	std::string CMsProjectFile::getIntermediateDirectory(const std::string &a_sCompileFile)
 	{
 		return "checkIncludes_" + tools::getSpecificFileName(a_sCompileFile) + "\\";
 	}
@@ -152,17 +166,6 @@ namespace msvc
 			}
 		}
 
-		/*
-		auto *pElementPropertyGroup = findOrAddGroupWithCondition(sTagPropertyGroup);
-		if (pElementPropertyGroup)
-		{
-			const std::string sValueIntDir = getIntermediateDirectory(a_sCompileFile);
-			auto *pElementIntDir = findOrAddElement(*pElementPropertyGroup, sTagIntDir, nullptr, sValueIntDir);
-			if (pElementIntDir)
-			{
-				return true;
-			}
-		}*/
 		return false;
 	}
 

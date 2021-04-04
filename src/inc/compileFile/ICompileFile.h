@@ -18,9 +18,12 @@ namespace compileFile
 		virtual const std::string &getFile() const = 0; // the original filename
 		virtual const platform::string &getProjectFileWorkingCopy() const = 0;
 		virtual INCLUDE_HANDLES getIncludes() const = 0;
-		virtual const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const = 0;
+		virtual const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const = 0;		
 		
-		virtual bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) = 0;		
+		virtual bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) = 0;				
+		virtual bool addMarkersForPreProcess() = 0;
+		virtual bool removeMarkersForPreProcess() = 0;
+		virtual void filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile) = 0;
 	};
 	
 	

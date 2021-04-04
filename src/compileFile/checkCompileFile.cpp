@@ -8,14 +8,11 @@
 #include "tools/strings.h"
 #include "readCompileFile.h"
 #include "cloneProject.h"
+#include "preProcess.h"
 #include "projectFile/IThread.h"
 
 namespace compileFile
 {
-
-	// show compile log, when initial compile failed
-#define _SHOW_NO_COMPILE_REASON
-
 	enum class ETestIncludeResult
 	{
 		eCompileOk,
@@ -54,23 +51,46 @@ namespace compileFile
 		return ETestIncludeResult::eCompileOk;
 	}
 
-	void checkCompileFile(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
-	{
-		// first rebuild the file in its original state
+	bool buildOriginalFile(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
+	{		
+		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
+		if (eResult != compiler::EResult::eOk)
 		{
-			const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
-			if (eResult != compiler::EResult::eOk)
-			{
-				logger::add(logger::EType::eError, "Abort checking file " + tools::strings::getQuoted(a_compileFile.getFile()) + ". File doesn't compile at all. See errors below.");
-#ifdef _SHOW_NO_COMPILE_REASON
-				// we want to let the user know, why the file didn't compile
-				if (!a_parameters.getHasOption(EOption::eCompileLog))
-					a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, { compiler::EOption::eLogErrors });
-#endif				
-				return;
-			}
+			logger::add(logger::EType::eError, "Abort checking file " + tools::strings::getQuoted(a_compileFile.getFile()) + ". File doesn't compile at all. See errors below.");
+			// we want to let the user know, why the file didn't compile
+			if (!a_parameters.getHasOption(EOption::eCompileLog))
+				a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, { compiler::EOption::eLogErrors });
+			return false;
 		}
+		return true;
+	}
 
+	void filterIncludesByPreProcess(projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
+	{
+		// preprocess the file and filter the include files with the result.
+		// we can ignore all includes that are not to be found in the preprocess result.
+		// if this goes wrong somehow, we ignore that and just keep the includes as they are
+	
+		if (a_project.switchPreProcessOnly(true))
+		{
+			platform::string sPreProcessResultFile;
+			if (a_compileFile.addMarkersForPreProcess())
+			{
+				const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
+				if (eResult == compiler::EResult::eOk)
+				{
+					sPreProcessResultFile = preprocess::getPreProcessResultPath(a_project, a_parameters, a_compileFile);
+				}
+			}			
+			a_compileFile.removeMarkersForPreProcess();
+			if (!sPreProcessResultFile.empty())
+				a_compileFile.filterIncludesByPreProcessResult(sPreProcessResultFile);
+		}
+		a_project.switchPreProcessOnly(false);
+	}
+
+	void checkCompileFileIncludes(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
+	{		
 		std::vector<std::string> messages;
 
 		// now try to disable includes
@@ -113,7 +133,14 @@ namespace compileFile
 			{
 				if (!upCompileFile->getIncludes().empty())
 				{
-					checkCompileFile(a_compiler, a_parameters, *upCompileFile);
+					if (buildOriginalFile(a_compiler, a_parameters, *upCompileFile))
+					{
+						filterIncludesByPreProcess(*upProject, a_compiler, a_parameters, *upCompileFile);
+						if (!upCompileFile->getIncludes().empty())
+						{
+							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile);
+						}
+					}
 				}
 			}
 			else

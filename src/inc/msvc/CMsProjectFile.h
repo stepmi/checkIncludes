@@ -15,8 +15,10 @@ namespace msvc
 		bool save(const platform::string &a_wsPath);
 				
 		bool customize(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy, const bool a_bUsePrecompiledHeaders);
-		std::string getIntermediateDirectory(const std::string &a_sCompileFile) const;
+		bool switchPreProcessOnly(const bool a_bOn);		
 		std::string getStdAfx() const;
+
+		static std::string getIntermediateDirectory(const std::string &a_sCompileFile);
 	private:
 
 		std::string createCondition() const;

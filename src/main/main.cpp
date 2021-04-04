@@ -9,13 +9,6 @@
 #include "commandline.h"
 #include "projectFile/projectFile.h"
 
-// TODO: 
-// cmake add filters
-
-// better logging options
-// check with qt project
-// idea for precompile to handle #ifdef: add fake lines after each include to see if they are in the precompiled result file
-
 
 #ifdef _WIN32
 int wmain(int argc, wchar_t* argv[])

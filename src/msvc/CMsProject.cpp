@@ -1,12 +1,15 @@
 #include "msvc/CMsProject.h"
 #include "system/exit.h"
 #include "tools/filesystem.h"
+#include "msvc/CMsProjectFile.h"
 
 namespace msvc
 {
 
-	CMsProject::CMsProject(const platform::string &a_wsProjectFile, const std::string &s_sCompileFile, const std::string &s_sStdAfx, const platform::string &a_wsIntermediateDir) :
-		m_wsProjectFile(a_wsProjectFile), m_sCompileFile(s_sCompileFile), m_sStdAfx(s_sStdAfx), m_wsIntermediateDir(a_wsIntermediateDir)
+	CMsProject::CMsProject(const CParameters &a_parameters, const platform::string &a_wsProjectFile, const std::string &s_sCompileFile, 
+		const std::string &s_sStdAfx, const platform::string &a_wsIntermediateDir) :
+		m_parameters(a_parameters), m_wsProjectFile(a_wsProjectFile), m_sCompileFile(s_sCompileFile), 
+		m_sStdAfx(s_sStdAfx), m_wsIntermediateDir(a_wsIntermediateDir)
 	{
 		exitHandler::add(m_wsProjectFile);
 		exitHandler::add(m_wsIntermediateDir);
@@ -17,8 +20,8 @@ namespace msvc
 		// remove the working copy and the intermediate dir
 		tools::filesystem::removeAll(m_wsProjectFile);
 		exitHandler::remove(m_wsProjectFile);
-		tools::filesystem::removeAll(m_wsIntermediateDir);
-		exitHandler::remove(m_wsIntermediateDir);
+		bool b = tools::filesystem::removeAll(m_wsIntermediateDir);
+		exitHandler::remove(m_wsIntermediateDir);		
 	}
 
 
@@ -35,6 +38,21 @@ namespace msvc
 	const std::string &CMsProject::getCompileFileWorkingCopy() const
 	{
 		return m_sCompileFile;
+	}
+
+	bool CMsProject::switchPreProcessOnly(const bool a_bOn)
+	{
+		msvc::CMsProjectFile msProjectFile(m_parameters);
+
+		if (msProjectFile.load(m_wsProjectFile))
+		{
+			if (msProjectFile.switchPreProcessOnly(a_bOn))
+			{
+				if (msProjectFile.save(m_wsProjectFile))
+					return true;
+			}
+		}
+		return false;
 	}
 
 }

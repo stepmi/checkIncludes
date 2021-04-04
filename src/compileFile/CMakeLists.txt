@@ -10,6 +10,8 @@ set(SOURCES
 	cloneProject.h
 	filterIncludes.h
 	readCompileFile.h
+	preProcess.cpp
+	preProcess.h
 )
 
 fncAddFiles(SOURCES ${SOURCES})

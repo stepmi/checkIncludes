@@ -167,6 +167,7 @@
     <ClCompile Include="src\compileFile\CIncludeFileIgnore.cpp" />
     <ClCompile Include="src\compileFile\cloneProject.cpp" />
     <ClCompile Include="src\compileFile\filterIncludes.cpp" />
+    <ClCompile Include="src\compileFile\preProcess.cpp" />
     <ClCompile Include="src\compileFile\readCompileFile.cpp" />
     <ClCompile Include="src\compiler\createCompiler.cpp" />
     <ClCompile Include="src\main\commandline.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="src\compileFile\CCompileFile.h" />
     <ClInclude Include="src\compileFile\cloneProject.h" />
     <ClInclude Include="src\compileFile\filterIncludes.h" />
+    <ClInclude Include="src\compileFile\preProcess.h" />
     <ClInclude Include="src\compileFile\readCompileFile.h" />
     <ClInclude Include="src\inc\compileFile\CFilePos.h" />
     <ClInclude Include="src\inc\compileFile\CIncludeFile.h" />

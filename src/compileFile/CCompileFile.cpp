@@ -4,9 +4,15 @@
 #include "system/exit.h"
 #include "system/logger.h"
 #include "system/exit.h"
+#include "tools/find.h"
 
 namespace compileFile
 {
+
+	platform::string getCompileFilePath(const std::string &a_sCompileFile, const platform::string &a_wsProjectFile)
+	{
+		return a_wsProjectFile.parent_path() / STRING_TO_PLATFORM(a_sCompileFile);
+	}
 
 	CCompileFile::CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
 		const platform::string &a_wsProjectFile,
@@ -43,26 +49,41 @@ namespace compileFile
 		return nullptr;
 	}
 
-	bool CCompileFile::switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn)
+	CInclude *CCompileFile::getInclude(const HANDLE_INCLUDE a_hInclude)
 	{
-		const int iOffset = a_bSwitchOn ? -m_iLenDisableInclude : m_iLenDisableInclude;
-		bool bIncludeSwitched = false;
-		for (auto &include : m_includes)
+		return const_cast<CInclude*>(static_cast<const CCompileFile&>(*this).getInclude(a_hInclude));
+	}
+
+	bool CCompileFile::switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn)
+	{			
+		CInclude *pInclude = getInclude(a_hInclude);
+		if (pInclude)
 		{
-			if (!bIncludeSwitched)
+			if (switchIncludeInSrcAndFile(*pInclude, a_bSwitchOn))
 			{
-				if (include.getHandle() == a_hInclude)
-				{
-					if (switchIncludeInSrcAndFile(include, a_bSwitchOn))
-						bIncludeSwitched = true;
-				}
-			}
-			else
-			{
-				include.offset(iOffset);
+				const int iOffset = a_bSwitchOn ? -m_iLenDisableInclude : m_iLenDisableInclude;
+				offsetIncludesAfter(a_hInclude, iOffset);
+				return true;
 			}
 		}
-		return bIncludeSwitched;
+		return false;
+	}
+
+	bool CCompileFile::addMarkersForPreProcess()
+	{
+		return switchMarkersForPreProcess(true);
+	}
+
+	bool CCompileFile::removeMarkersForPreProcess()
+	{
+		return switchMarkersForPreProcess(false);
+	}
+	
+	bool CCompileFile::switchMarkersForPreProcess(const bool a_bSwitchOn)
+	{
+		for (auto &include : m_includes)
+			switchMarkerForPreProcessInSrc(include, a_bSwitchOn);
+		return tools::filesystem::writeFile(getFilePath(), m_sSrcCode);
 	}
 
 	void CCompileFile::switchOffIncludeStdAfx()
@@ -89,10 +110,60 @@ namespace compileFile
 		return tools::filesystem::writeFile(getFilePath(), m_sSrcCode);
 	}
 
-	platform::string getCompileFilePath(const std::string &a_sCompileFile, const platform::string &a_wsProjectFile)
+	void CCompileFile::switchMarkerForPreProcessInSrc(const CInclude &a_include, const bool a_bSwitchOn)
 	{
-		return a_wsProjectFile.parent_path() / STRING_TO_PLATFORM(a_sCompileFile);
+		const std::string sMarkerLine = a_include.getMarkerLineForPreProcess();
+		if (a_bSwitchOn)
+			m_sSrcCode.insert(a_include.getPos(), sMarkerLine);
+		else					
+			m_sSrcCode.erase(a_include.getPos(), static_cast<size_t>(sMarkerLine.size()));
+			
+		const int iMarkerLineLength = static_cast<int>(sMarkerLine.size());
+		const int iOffset = a_bSwitchOn ? iMarkerLineLength : -iMarkerLineLength;
+		offsetIncludesAfter(a_include.getHandle(), iOffset);		
 	}
+
+	void CCompileFile::offsetIncludesAfter(const HANDLE_INCLUDE a_hInclude, const int a_iOffset)
+	{
+		bool bStartOffsetting = false;
+		for (auto &include : m_includes)
+		{
+			if (!bStartOffsetting)
+			{
+				if (include.getHandle() == a_hInclude)
+					bStartOffsetting = true;
+				
+			}
+			else			
+				include.offset(a_iOffset);			
+		}
+	}	
+
+	void CCompileFile::filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile)
+	{
+		INCLUDE_HANDLES includesToRemove;
+		{
+			const std::string sPreProcessResult = tools::filesystem::readFile(a_sPreProcessFile);
+			size_t iStart = 0;
+			for (auto &include : m_includes)
+			{
+				const size_t iPos = sPreProcessResult.find(include.getMarkerVariableForPreProcess(), iStart);
+				if (iPos != std::string::npos)
+					iStart = iPos;
+				else
+					includesToRemove.push_back(include.getHandle());
+			}
+		}		
+
+		for (auto it = m_includes.begin(); it != m_includes.end(); )
+		{
+			if (tools::find(includesToRemove, it->getHandle()))
+				it = m_includes.erase(it);
+			else
+				it++;
+		}
+	}
+	
 
 }
 

@@ -20,6 +20,8 @@ namespace compileFile
 		size_t getLine() const;
 		std::string getFile() const;
 		std::string getTextForMessage() const;
+		std::string getMarkerVariableForPreProcess() const;
+		std::string getMarkerLineForPreProcess() const;
 
 		// manipulators
 		void offset(const int a_iValue);

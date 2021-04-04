@@ -86,9 +86,9 @@ namespace compileFile
 				return std::unique_ptr<projectFile::IProject>(nullptr);
 			}
 
-			const platform::string wsIntermediateDir = getIntermediateDirectoryPath(msProjectFile.getIntermediateDirectory(a_sCompileFile), a_parameters.getProject());
+			const platform::string wsIntermediateDir = getIntermediateDirectoryPath(msvc::CMsProjectFile::getIntermediateDirectory(a_sCompileFile), a_parameters.getProject());
 
-			return std::make_unique<msvc::CMsProject>(wsWorkingCopyProject, sWorkingCopyCompileFile, sStdAfx, wsIntermediateDir);
+			return std::make_unique<msvc::CMsProject>(a_parameters, wsWorkingCopyProject, sWorkingCopyCompileFile, sStdAfx, wsIntermediateDir);
 #endif
 		}
 
