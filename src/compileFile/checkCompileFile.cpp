@@ -65,12 +65,15 @@ namespace compileFile
 		return true;
 	}
 
-	void filterIncludesByPreProcess(projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
+	void filterIncludes(projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, INCLUDES_TO_IGNORE &a_includesToIgnore)
 	{
-		// preprocess the file and filter the include files with the result.
+		// filter includes with includes to ignore, provided by the user
+		// and with the compile file name
+		a_compileFile.filterIncludes(a_includesToIgnore);
+
+		// now preprocess the file and filter the include files with the result.
 		// we can ignore all includes that are not to be found in the preprocess result.
-		// if this goes wrong somehow, we ignore that and just keep the includes as they are
-	
+		// if this goes wrong somehow, we ignore that and just keep the includes as they are	
 		if (a_project.switchPreProcessOnly(true))
 		{
 			platform::string sPreProcessResultFile;
@@ -127,15 +130,14 @@ namespace compileFile
 		if (upProject)
 		{
 			auto upCompileFile = readCompileFile(a_sCompileFile, upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy(), 
-				a_parameters.getHasOption(EOption::eRequiresPrecompiledHeaders) ? std::string() : upProject->getStdAfx(), 
-				a_includesToIgnore);
+				a_parameters.getHasOption(EOption::eRequiresPrecompiledHeaders) ? std::string() : upProject->getStdAfx());
 			if (upCompileFile)
 			{
 				if (!upCompileFile->getIncludes().empty())
 				{
 					if (buildOriginalFile(a_compiler, a_parameters, *upCompileFile))
 					{
-						filterIncludesByPreProcess(*upProject, a_compiler, a_parameters, *upCompileFile);
+						filterIncludes(*upProject, a_compiler, a_parameters, *upCompileFile, a_includesToIgnore);
 						if (!upCompileFile->getIncludes().empty())
 						{
 							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile);

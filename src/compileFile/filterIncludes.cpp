@@ -30,7 +30,7 @@ namespace compileFile
 		}
 	}
 
-	void filterIncludesWithFileName(const std::string &a_sCompileFile, INCLUDES &a_includes)
+	void filterIncludesWithCompileFileName(const std::string &a_sCompileFile, INCLUDES &a_includes)
 	{
 		const platform::string sCompileFileNamePure = STRING_TO_PLATFORM(a_sCompileFile).stem();
 
@@ -57,7 +57,7 @@ namespace compileFile
 			const bool bIgnoreFilesWithCompileFileName = true;
 			if (bIgnoreFilesWithCompileFileName)
 			{
-				filterIncludesWithFileName(a_sCompileFile, a_includes);
+				filterIncludesWithCompileFileName(a_sCompileFile, a_includes);
 			}
 		}
 	}

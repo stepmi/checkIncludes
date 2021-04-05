@@ -3,6 +3,7 @@
 #include "tools/platforms.h"
 #include "tools/interface.h"
 #include "includeFileHandle.h"
+#include "CIncludeFileIgnore.h"
 
 namespace compileFile
 {
@@ -21,6 +22,9 @@ namespace compileFile
 		virtual const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const = 0;		
 		
 		virtual bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) = 0;				
+		virtual void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore) = 0;
+
+		// preprocess
 		virtual bool addMarkersForPreProcess() = 0;
 		virtual bool removeMarkersForPreProcess() = 0;
 		virtual void filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile) = 0;

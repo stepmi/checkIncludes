@@ -5,6 +5,7 @@
 #include "system/logger.h"
 #include "system/exit.h"
 #include "tools/find.h"
+#include "filterIncludes.h"
 
 namespace compileFile
 {
@@ -16,7 +17,7 @@ namespace compileFile
 
 	CCompileFile::CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
 		const platform::string &a_wsProjectFile,
-		const std::string &a_sSrcCode, INCLUDES &a_includes) :
+		const std::string &a_sSrcCode, const INCLUDES &a_includes) :
 		m_sCompileFile(a_sCompileFile), m_sCompileFileWorkingCopy(a_sCompileFileWorkingCopy),
 		m_wsProjectFile(a_wsProjectFile),
 		m_sSrcCode(a_sSrcCode), m_includes(a_includes),
@@ -138,6 +139,11 @@ namespace compileFile
 				include.offset(a_iOffset);			
 		}
 	}	
+
+	void CCompileFile::filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore)
+	{
+		compileFile::filterIncludes(m_sCompileFile, a_includesToIgnore, m_includes);
+	}
 
 	void CCompileFile::filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile)
 	{

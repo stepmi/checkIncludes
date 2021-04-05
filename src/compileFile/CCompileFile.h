@@ -10,7 +10,7 @@ namespace compileFile
 	public:
 		CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
 			const platform::string &a_wsProjectFile,
-			const std::string &a_sSrcCode, INCLUDES &a_includes);
+			const std::string &a_sSrcCode, const INCLUDES &a_includes);
 
 		~CCompileFile();
 
@@ -22,6 +22,10 @@ namespace compileFile
 		INCLUDE_HANDLES getIncludes() const override;		
 		const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const override;
 		bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) override;
+
+		void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore) override;
+
+		// preprocess
 		bool addMarkersForPreProcess() override;
 		bool removeMarkersForPreProcess() override;
 		void filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile) override;
