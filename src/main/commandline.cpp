@@ -7,8 +7,26 @@ void printHelp()
 {
 	std::vector<std::string> msg =
 	{		
-		// TODO: this already describes the new options (c+, c-).
 		"checkIncludes [options] projectfile",
+		"",
+		"options:",
+		"   -h      print help text",
+		"   -p:X    platform for build process, X is x64, x86, ...",
+		"   -c:X    configuration for build process, X is Debug, Release, ...",
+		"   -l:f    show all processed files",
+		"   -l:i    show checked includes for all processed files",
+		"   -l:c    show command lines for all processed files",
+		"   -l:r    show compiler output - this produces a lot of output",
+		"   -o:X    check only this file, X is a c/cpp file",
+		"   -i:X    ignore file, X may be a c/cpp file or a header",
+		"           if X is a c/cpp file it is not checked",
+		"           if X is a header, it isn't checked if this header can be removed",
+		"example:",
+		">checkIncludes -p:x64 -c:Release -i:tools/enumFiles.cpp -i:vector.h checkIncludes.vcxproj",
+		""
+
+		// TODO: implement new options (c+, c-).
+		/*"checkIncludes [options] projectfile",
 		"",
 		"options:",		
 		"   -c:x    configuration for build process, x is Debug, Release, etc",
@@ -24,7 +42,7 @@ void printHelp()
 		
 		"example:",
 		">checkIncludes -p:x64 -c:Release -i:tools/enumFiles.cpp -i:vector.h checkIncludes.vcxproj",
-		""
+		""*/
 	};
 		
 	logger::add(logger::EType::eMessage, msg);
