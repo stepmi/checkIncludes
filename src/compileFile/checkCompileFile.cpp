@@ -34,9 +34,7 @@ namespace compileFile
 	{
 		// disable the include		
 		if (!a_compileFile.switchInclude(a_hInclude, !bSwitchIncludeOn))
-			return ETestIncludeResult::eFileSystemError;
-
-		logger::add(logger::EType::eDiagnose, "compiling " + tools::strings::getQuoted(a_compileFile.getFile()));
+			return ETestIncludeResult::eFileSystemError;		
 
 		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eCompile, a_parameters, getCompileOptions(a_parameters));
 		if (eResult != compiler::EResult::eOk)
@@ -130,8 +128,9 @@ namespace compileFile
 		return sPreProcessResultFile;
 	}
 	
-	void checkCompileFileIncludes(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, std::vector<std::string> &a_rMessages)
+	void checkCompileFileIncludes(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, std::vector<std::string> &a_rMessages, std::vector<std::string> &a_rCheckedIncludes)
 	{				
+		a_rCheckedIncludes.emplace_back("checked includes for " + a_compileFile.getFile() + ":");
 		auto includes = a_compileFile.getIncludesToCheck();
 
 		// now try to disable includes
@@ -140,6 +139,7 @@ namespace compileFile
 			const CInclude *pInclude = a_compileFile.getInclude(hInclude);
 			if (pInclude)
 			{
+				a_rCheckedIncludes.emplace_back("line " + tools::strings::itos(pInclude->getLine()) + " " + pInclude->getTextForMessage());
 				const ETestIncludeResult eResult = testInclude(a_compiler, a_parameters, a_compileFile, hInclude);
 				if (eResult == ETestIncludeResult::eFileSystemError)
 				{
@@ -163,9 +163,10 @@ namespace compileFile
 
 	void checkCompileFile(projectFile::IThread &a_thread, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, const std::string a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore)
 	{
+		logger::add(logger::EType::eProcessedFiles, "Processing file " + tools::strings::getQuoted(a_sCompileFile));
 		auto upProject = cloneProject(a_parameters, a_sCompileFile);
 		if (upProject)
-		{
+		{			
 			auto upCompileFile = readCompileFile(a_sCompileFile, upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy());
 			if (upCompileFile)
 			{
@@ -175,14 +176,15 @@ namespace compileFile
 					upCompileFile->filterIncludes(a_includesToIgnore, sPreProcessResultFile);
 					if (!upCompileFile->getIncludesToCheck().empty())
 					{		
-						std::vector<std::string> warnings, messages;
+						std::vector<std::string> warnings, messages, checkedIncludes;
 						if (buildOriginalFile(*upProject, a_compiler, a_parameters, *upCompileFile, warnings))
 						{													
-							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile, messages);
+							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile, messages, checkedIncludes);
 						}
 						if (!messages.empty())
 						{
 							logger::add(logger::EType::eWarning, warnings);
+							logger::add(logger::EType::eCheckedIncludes, checkedIncludes);
 							logger::add(logger::EType::eMessage, messages);
 						}
 					}

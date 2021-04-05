@@ -54,7 +54,7 @@ namespace msvc
 		compiler::EResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, const compiler::OPTIONS &a_options) const override
 		{
 			const std::wstring wsCommandLine = getCommandLine(a_compileFile, a_eAction, a_parameters, a_options);
-			//logger::add(logger::EType::eMessage, tools::strings::wtoa(wsCommandLine));
+			logger::add(logger::EType::eCommandLines, tools::strings::wtoa(wsCommandLine));
 			// 2nd parameter of CreateProcess() is a non-const ptr.						
 			const auto iBufSize = wsCommandLine.size() + 1;
 			std::unique_ptr<wchar_t[]> upCommandLine = std::make_unique<wchar_t[]>(iBufSize);
@@ -79,8 +79,9 @@ namespace msvc
 			}
 			else
 			{
-				std::wstring wsError = getLastError();
-				logger::add(logger::EType::eError, tools::strings::wtoa(wsError));
+				std::wstring wsError = getLastError();				
+				logger::add(logger::EType::eError, tools::strings::wtoa(wsError) + " with:");
+				logger::add(logger::EType::eError, tools::strings::wtoa(wsCommandLine));				
 				return compiler::EResult::eError;
 			}
 		}
@@ -92,14 +93,9 @@ namespace msvc
 				return ws + L"ClCompile";
 			else if (a_eAction == compiler::EAction::eReBuild)
 				return ws + L"Clean;ClCompile";
-			//else if (a_eAction == EAction::ePreCompile)
-			//	return ws + L"ClCompile";
 			else
 				return L"";
 		}
-
-		// seems that msbuild doesn't accept most things as properties.
-		// so especially PreprocessToFile didn't work
 
 		std::wstring getOptionsText(const compiler::OPTIONS &a_options) const
 		{

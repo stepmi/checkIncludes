@@ -37,7 +37,10 @@ Option | Explanation
 -h     | print help text
 -p:X   | platform for build process, where X is x64, x86, etc
 -c:X   | configuration for build process, where X is Debug, Release, etc
--log   | show compiler log
+-l:f   | show all processed files
+-l:i   | show checked includes for all processed files
+-l:c   | show command lines for all processed files
+-l:r   | show compiler output - this produces a lot of output
 -o:X   | check only this file, where X is a c/cpp file. Files have to be specified exactly as in the project file.
 -i:X   | ignore file, where X may be a c/cpp file or a header<br>if X is a c/cpp file it is not checked<br>if X is a header, it isn't checked if this header can be removed			
 
