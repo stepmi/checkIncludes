@@ -8,7 +8,7 @@ Throughout the life of a source file, the #include section often becomes bigger,
 
 ## How does it work
 
-checkIncludes relies on the build chain for the project. For every compile-file (such as cpp, cxx, c, etc) in the project it iterates and removes all #includes and checks if the file builds without the #include. If it does build without errors, the user is informed that the #include may be removed. The program doesn't modify any files, instead it works with temporary copies of the files.
+checkIncludes relies on the build chain for the project. For every compile-file (such as cpp, cxx, c, etc) in the project it iterates and removes all #includes and checks if the file builds without the #include. If it does build without errors, the user is informed that the #include may be removed. The preprocesor is used to find out which #includes are relevant for the given platform and configuration. The program doesn't modify any files, instead it works with temporary copies of the files.
 
 ## Caveat
 
@@ -16,7 +16,7 @@ Just because a certain compile-file builds without errors, it may not create the
 
 Since checkIncludes tries to build each compile-file multiple times, it is very slow although it uses a multithreaded approach.
 
-The usefulness of the results depends a lot on the #include structure. This is especially important for projects that use precompiled headers. checkIncludes assumes, that all compile-files build without including the precompiled header file. That means each compile-file is expected to include everything it uses. If this isn't the case, the tool can be used, but the results are not very meaningful.
+The usefulness of the results depends a lot on the #include structure. This is especially important for projects that use precompiled headers. checkIncludes assumes, that all compile-files build without including the precompiled header file. That means each compile-file is expected to include everything it uses. If this isn't the case the tool can be used, but the results are not very meaningful.
 
 Although checkIncludes can be build cross-platform, it only works with MSBuild for now.
 
@@ -26,7 +26,7 @@ Use the attached Visual Studio Solution or create your own project with CMake. c
 
 ## How to run
 
-Just call checkIncludes from your terminal and supply a path to the project file as parameter.<br>
+Call checkIncludes from your terminal and supply a path to the project file as parameter.<br>
 checkIncludes has to find the build tool, so for MSBuild that means, you have to add the path to MSBuild.exe to your Windows path variable.
 
 
@@ -63,12 +63,7 @@ checkIncludes has been tested with a variety of MsBuild projects. It is still in
 
 ### Next steps
 
-* Only test #includes that are used with the current compile-process at all. Ignore #includes that are disabled by the preprocessor.
-* Improve tolerance for file names. Use case-insensitive compare and handle different types of slashes.
-* Improve logging options
-* Further testing
-* CMake projects should add source files into folders via source_group, to make the project structure more clear. Until now I didn't find a solution for that.
-* Add build chains other than MSBuild. Although the source code is open for that, my knowledge of other build processes is very limited. So contributions for this task are very welcome.
+See issues and project for open issues.
 
 ## Credits
 
