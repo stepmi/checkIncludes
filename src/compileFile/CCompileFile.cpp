@@ -36,7 +36,10 @@ namespace compileFile
 	{
 		INCLUDE_HANDLES result;
 		for (auto &include : m_includes)
-			result.push_back(include.getHandle());
+		{
+			if (!include.getIgnore())
+				result.push_back(include.getHandle());
+		}
 		return result;
 	}
 
@@ -140,34 +143,15 @@ namespace compileFile
 		}
 	}	
 
-	void CCompileFile::filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore)
-	{
-		compileFile::filterIncludes(m_sCompileFile, a_includesToIgnore, m_includes);
-	}
+	// we don't remove any includes. we just set them to ignore. 
+	void CCompileFile::filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const platform::string &a_sPreProcessFile)
+	{	
+		filterIncludesByIncludesToIgnore(m_sCompileFile, a_includesToIgnore, m_includes);
 
-	void CCompileFile::filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile)
-	{
-		INCLUDE_HANDLES includesToRemove;
-		{
-			const std::string sPreProcessResult = tools::filesystem::readFile(a_sPreProcessFile);
-			size_t iStart = 0;
-			for (auto &include : m_includes)
-			{
-				const size_t iPos = sPreProcessResult.find(include.getMarkerVariableForPreProcess(), iStart);
-				if (iPos != std::string::npos)
-					iStart = iPos;
-				else
-					includesToRemove.push_back(include.getHandle());
-			}
-		}		
+		// very likely a file which is named the same as the compile file should never be removed.
+		filterIncludesWithCompileFileName(m_sCompileFile, m_includes);
 
-		for (auto it = m_includes.begin(); it != m_includes.end(); )
-		{
-			if (tools::find(includesToRemove, it->getHandle()))
-				it = m_includes.erase(it);
-			else
-				it++;
-		}
+		filterIncludesByPreProcessResult(a_sPreProcessFile, m_includes);
 	}
 	
 

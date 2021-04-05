@@ -22,9 +22,11 @@ namespace compileFile
 		std::string getTextForMessage() const;
 		std::string getMarkerVariableForPreProcess() const;
 		std::string getMarkerLineForPreProcess() const;
+		bool getIgnore() const; // ignore means, we don't want to enable/disable it
 
 		// manipulators
 		void offset(const int a_iValue);
+		void setToIgnore();
 	private:
 		std::string m_sFile;
 
@@ -33,7 +35,8 @@ namespace compileFile
 			m_iLine = std::string::npos;
 
 		bool m_bIsSystemFile = false; // #include<>
-		bool m_bIsEnabled = true;
+		//bool m_bIsEnabled = true;
+		bool m_bIgnore = false;
 	};
 
 	using INCLUDES = std::vector<CInclude>;

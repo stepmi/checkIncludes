@@ -2,6 +2,7 @@
 #include "tools/strings.h"
 #include <mutex>
 #include <algorithm>
+#include "tools/filesystem.h"
 
 namespace compileFile
 {
@@ -10,23 +11,21 @@ namespace compileFile
 	void filterIncludesByIncludesToIgnore(const std::string &a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore, INCLUDES &a_includes)
 	{
 		std::lock_guard<std::mutex> guard(mutex_includesToIgnore);
-		for (auto it = a_includes.begin(); it != a_includes.end(); )
-		{
-			const CInclude &include = *it;
-			bool bIgnore = false;
+		for (auto &include : a_includes)
+		{			
+			if (!include.getIgnore())
 			{
-				auto itIncludeToIgnore = std::find(a_includesToIgnore.begin(), a_includesToIgnore.end(), include);
-				if (itIncludeToIgnore != a_includesToIgnore.end())
+				bool bIgnore = false;
 				{
-					// store, for which compile file this include was ignored. This may be useful later.
-					itIncludeToIgnore->addIgnoreCase(CFilePos(a_sCompileFile, include.getLine()));
-					bIgnore = true;
+					auto itIncludeToIgnore = std::find(a_includesToIgnore.begin(), a_includesToIgnore.end(), include);
+					if (itIncludeToIgnore != a_includesToIgnore.end())
+					{
+						// store, for which compile file this include was ignored. This may be useful later.
+						itIncludeToIgnore->addIgnoreCase(CFilePos(a_sCompileFile, include.getLine()));
+						include.setToIgnore();
+					}
 				}
 			}
-			if (bIgnore)
-				it = a_includes.erase(it);
-			else
-				it++;
 		}
 	}
 
@@ -35,33 +34,36 @@ namespace compileFile
 		const platform::string sCompileFileNamePure = STRING_TO_PLATFORM(a_sCompileFile).stem();
 
 		// very likely a file which is named the same as the compile file should never be removed.
-		for (auto it = a_includes.begin(); it != a_includes.end(); )
-		{
-			const CInclude &include = *it;
-
-			const platform::string sIncludeFileNamePure = STRING_TO_PLATFORM(include.getFile()).stem();
-			if (tools::strings::compareCaseInsensitive(sCompileFileNamePure, sIncludeFileNamePure))
-				it = a_includes.erase(it);
-			else
-				it++;
-		}
-	}
-
-	void filterIncludes(const std::string &a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore, INCLUDES &a_includes)
-	{
-		if (!a_includes.empty())
-		{
-			filterIncludesByIncludesToIgnore(a_sCompileFile, a_includesToIgnore, a_includes);
-
-			// very likely a file which is named the same as the compile file should never be removed.
-			const bool bIgnoreFilesWithCompileFileName = true;
-			if (bIgnoreFilesWithCompileFileName)
+		for (auto &include : a_includes)
+		{	
+			if (!include.getIgnore())
 			{
-				filterIncludesWithCompileFileName(a_sCompileFile, a_includes);
+				const platform::string sIncludeFileNamePure = STRING_TO_PLATFORM(include.getFile()).stem();
+				if (tools::strings::compareCaseInsensitive(sCompileFileNamePure, sIncludeFileNamePure))
+					include.setToIgnore();
 			}
 		}
 	}
 
+	void filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile, INCLUDES &a_includes)
+	{
+		INCLUDE_HANDLES includesToRemove;
+		{
+			const std::string sPreProcessResult = tools::filesystem::readFile(a_sPreProcessFile);
+			size_t iStart = 0;
+			for (auto &include : a_includes)
+			{
+				if (!include.getIgnore())
+				{
+					const size_t iPos = sPreProcessResult.find(include.getMarkerVariableForPreProcess(), iStart);
+					if (iPos != std::string::npos)
+						iStart = iPos;
+					else
+						include.setToIgnore();
+				}
+			}
+		}
+	}	
 
 
 }

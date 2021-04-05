@@ -65,18 +65,15 @@ namespace compileFile
 		return true;
 	}
 
-	void filterIncludes(projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, INCLUDES_TO_IGNORE &a_includesToIgnore)
+	platform::string preProcess(projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
 	{
-		// filter includes with includes to ignore, provided by the user
-		// and with the compile file name
-		a_compileFile.filterIncludes(a_includesToIgnore);
-
 		// now preprocess the file and filter the include files with the result.
 		// we can ignore all includes that are not to be found in the preprocess result.
 		// if this goes wrong somehow, we ignore that and just keep the includes as they are	
+		platform::string sPreProcessResultFile;
 		if (a_project.switchPreProcessOnly(true))
 		{
-			platform::string sPreProcessResultFile;
+
 			if (a_compileFile.addMarkersForPreProcess())
 			{
 				const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
@@ -84,20 +81,21 @@ namespace compileFile
 				{
 					sPreProcessResultFile = preprocess::getPreProcessResultPath(a_project, a_parameters, a_compileFile);
 				}
-			}			
+			}
 			a_compileFile.removeMarkersForPreProcess();
-			if (!sPreProcessResultFile.empty())
-				a_compileFile.filterIncludesByPreProcessResult(sPreProcessResultFile);
 		}
 		a_project.switchPreProcessOnly(false);
+		return sPreProcessResultFile;
 	}
-
+	
 	void checkCompileFileIncludes(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
 	{		
 		std::vector<std::string> messages;
 
+		auto includes = a_compileFile.getIncludes();
+
 		// now try to disable includes
-		for (auto &hInclude : a_compileFile.getIncludes())
+		for (auto &hInclude : includes)
 		{
 			const CInclude *pInclude = a_compileFile.getInclude(hInclude);
 			if (pInclude)
@@ -135,11 +133,12 @@ namespace compileFile
 			{
 				if (!upCompileFile->getIncludes().empty())
 				{
-					if (buildOriginalFile(a_compiler, a_parameters, *upCompileFile))
+					auto sPreProcessResultFile = preProcess(*upProject, a_compiler, a_parameters, *upCompileFile);
+					upCompileFile->filterIncludes(a_includesToIgnore, sPreProcessResultFile);
+					if (!upCompileFile->getIncludes().empty())
 					{
-						filterIncludes(*upProject, a_compiler, a_parameters, *upCompileFile, a_includesToIgnore);
-						if (!upCompileFile->getIncludes().empty())
-						{
+						if (buildOriginalFile(a_compiler, a_parameters, *upCompileFile))
+						{						
 							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile);
 						}
 					}

@@ -12,6 +12,9 @@ namespace compileFile
 	size_t CInclude::getPos() const { return m_iPosStart; }
 	size_t CInclude::getLine() const { return m_iLine; }
 	std::string CInclude::getFile() const { return m_sFile; }
+	bool CInclude::getIgnore() const { return m_bIgnore; }
+	void CInclude::setToIgnore() { m_bIgnore = true; }
+
 
 	void CInclude::offset(const int a_iValue)
 	{

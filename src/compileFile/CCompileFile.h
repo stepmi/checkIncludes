@@ -23,12 +23,11 @@ namespace compileFile
 		const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const override;
 		bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) override;
 
-		void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore) override;
+		void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const platform::string &a_sPreProcessFile) override;
 
 		// preprocess
 		bool addMarkersForPreProcess() override;
-		bool removeMarkersForPreProcess() override;
-		void filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile) override;
+		bool removeMarkersForPreProcess() override;		
 		
 	private:
 
@@ -45,7 +44,7 @@ namespace compileFile
 		std::string m_sCompileFileWorkingCopy,
 			m_sCompileFile; // the original name
 
-		INCLUDES m_includes;
+		INCLUDES m_includes; // this contains all includes. some are set to ignore.
 		std::string m_sSrcCode;
 
 		const std::string m_sDisableInclude = "// disabled by checkIncludes ";
