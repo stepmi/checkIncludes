@@ -11,17 +11,43 @@ namespace tools
 	namespace strings
 	{
 
-		const std::string sQuote = "\"";
+		static const std::string sQuote = "\"";
 
 		std::string getQuoted(const std::string &a)
 		{
 			return sQuote + a + sQuote;
 		}
 
-		bool strCompareCaseInsensitive(const platform::string &a, const platform::string &b)
+		template<typename T> T tolower_safe(const T c)
+		{
+			// this should be used for comparing include file names
+			// so this should be ascii-characters
+			using CHAR_TYPE_UNSIGNED = typename std::make_unsigned<T>::type;
+			return static_cast<T>(std::tolower(static_cast<CHAR_TYPE_UNSIGNED>(c)));
+		}
+
+
+		// return true, if equal
+		template<typename T> bool strCompareCaseInsensitive(const T &a, const T &b)
+		{
+			if (a.size() == b.size())
+			{
+				return std::equal(a.begin(), a.end(), b.begin(),
+					[](auto a, auto b) { return tolower_safe(a) == tolower_safe(b); });
+			}
+			else
+				return false;
+		}
+
+		bool compareCaseInsensitive(const platform::string &a, const platform::string &b)
 		{
 			// std::filesystem::path.compare() is case sensitive, so we use this
 			return strCompareCaseInsensitive(a.string(), b.string());
+		}
+
+		bool compareCaseInsensitive(const std::string &a, const std::string &b)
+		{
+			return strCompareCaseInsensitive(a, b);
 		}
 
 		std::string itos2Digits(const size_t a_iValue)
@@ -40,10 +66,23 @@ namespace tools
 			return itos(iHours) + ":" + itos2Digits(iMinutes) + ":" + itos2Digits(iSeconds);
 		}
 
+		bool compareUserFileName(const std::string &a_sFileFromProject, const std::string &a_sFileProvidedByUser)
+		{
+			// this isn't efficient, but that's not so important here
+			// correct directory separator
+			platform::string sFileFromProject(a_sFileFromProject);
+			sFileFromProject.make_preferred();
+			platform::string sFileProvidedByUser(a_sFileProvidedByUser);
+			sFileProvidedByUser.make_preferred();
+			if (!sFileProvidedByUser.has_parent_path())
+				sFileFromProject = sFileFromProject.filename();
+			return compareCaseInsensitive(sFileFromProject, sFileProvidedByUser);
+		}
+
 		
 #ifdef _WIN32
 
-		UINT global_iCodePage = 0;
+		static const UINT global_iCodePage = 0;
 
 		std::wstring atow(const std::string& a_Src)
 		{

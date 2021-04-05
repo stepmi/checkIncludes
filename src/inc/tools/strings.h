@@ -12,14 +12,7 @@ namespace tools
 	{
 		std::string getQuoted(const std::string &a);
 
-		template<typename T> T _tolower_safe(const T c)
-		{
-			// this should be used for comparing include file names
-			// so this should be ascii-characters
-			using CHAR_TYPE_UNSIGNED = typename std::make_unsigned<T>::type;
-			return static_cast<T>(std::tolower(static_cast<CHAR_TYPE_UNSIGNED>(c)));
-		}
-
+		
 		template<typename T> bool replace(T &a_sMain, const T &a_sFind, const T &a_sReplace, const bool bReplaceAll)
 		{
 			if (a_sFind.size() == 0)
@@ -39,21 +32,7 @@ namespace tools
 			} while (bReplaceAll && pos != T::npos);
 
 			return bFound;
-		}
-
-		// return true, if equal
-		template<typename T> bool strCompareCaseInsensitive(const T &a, const T &b)
-		{
-			if (a.size() == b.size())
-			{
-				return std::equal(a.begin(), a.end(), b.begin(),
-					[](auto a, auto b) { return _tolower_safe(a) == _tolower_safe(b); });
-			}
-			else
-				return false;
-		}
-
-		bool strCompareCaseInsensitive(const platform::string &a, const platform::string &b);
+		}				
 
 		template<typename T> std::string itos(const T a_iVal)
 		{
@@ -68,6 +47,10 @@ namespace tools
 		std::wstring atow(const std::string& a_Src);
 		std::string wtoa(const std::wstring& a_Src);
 #endif
+
+		bool compareCaseInsensitive(const std::string &a, const std::string &b);
+		bool compareCaseInsensitive(const platform::string &a, const platform::string &b);
+		bool compareUserFileName(const std::string &a_sFileFromProject, const std::string &a_sFileProvidedByUser);
 
 	}
 }

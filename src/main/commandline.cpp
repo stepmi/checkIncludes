@@ -1,5 +1,6 @@
 #include "commandline.h"
 #include "system/logger.h"
+#include "tools/filename.h"
 
 void printHelp()
 {
@@ -72,7 +73,12 @@ bool parseArgument(const platform::string &a_sArgument, CParameters &a_parameter
 	{
 		auto sValue = getArgumentValue(sArgument);
 		if (!sValue.empty())
-			a_parameters.addIgnoreFile(sValue);
+		{
+			if (tools::filename::isIncludeFile(sValue))
+				a_parameters.addIgnoreInclude(sValue);
+			else
+				a_parameters.addIgnoreCompileFile(sValue);
+		}
 	}
 	else
 		return false;

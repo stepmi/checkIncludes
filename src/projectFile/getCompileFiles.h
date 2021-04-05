@@ -6,5 +6,5 @@
 
 namespace projectFile
 {
-	std::vector<std::string> getCompileFiles(const CParameters &a_parameters);
+	std::vector<std::string> getCompileFiles(const CParameters &a_parameters, std::vector<std::string> &a_rRemovedCompileFiles);
 }

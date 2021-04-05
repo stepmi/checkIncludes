@@ -18,7 +18,7 @@ namespace compileFile
 	platform::string getWorkingCopyProjectFile(const platform::string &a_wsPath, const std::string &a_sCompileFile)
 	{
 		platform::string wsWorkingCopyAdd = PLATFORM_T("_checkIncludes_");
-		wsWorkingCopyAdd += STRING_TO_PLATFORM(tools::getSpecificFileName(a_sCompileFile));
+		wsWorkingCopyAdd += STRING_TO_PLATFORM(tools::filename::getSpecificFileName(a_sCompileFile));
 
 		platform::string wsWorkingCopy = a_wsPath.parent_path() / a_wsPath.stem();
 		wsWorkingCopy += wsWorkingCopyAdd;

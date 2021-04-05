@@ -92,7 +92,7 @@ namespace msvc
 
 	std::string CMsProjectFile::getIntermediateDirectory(const std::string &a_sCompileFile)
 	{
-		return "checkIncludes_" + tools::getSpecificFileName(a_sCompileFile) + "\\";
+		return "checkIncludes_" + tools::filename::getSpecificFileName(a_sCompileFile) + "\\";
 	}
 
 	

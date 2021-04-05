@@ -6,10 +6,10 @@
 #include "main/CParameters.h"
 #include "getCompileFiles.h"
 #include "setConfiguration.h"
+#include "tools/filename.h"
 
 namespace projectFile
-{
-
+{	
 	void checkIncludesToIgnoreUsed(const compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore)
 	{
 		for (auto &includeToIgnore : a_includesToIgnore)
@@ -22,38 +22,62 @@ namespace projectFile
 		}
 	}
 
-	compileFile::INCLUDES_TO_IGNORE getIncludesToIgnore(const std::vector<std::string> &a_sFiles)
+	bool checkPrintFilesMultiline(const std::vector<std::string> &a_files)
 	{
-		compileFile::INCLUDES_TO_IGNORE result;
-		for (auto &sFile : a_sFiles)
+		for (auto &sFile : a_files)
 		{
-			if (sFile.find(".h") != std::string::npos)
-				result.emplace_back(compileFile::CIncludeToIgnore(sFile));
+			if (tools::filename::hasDirectory(sFile))
+				return true;
+			else if (sFile.size() > 30)
+				return true;
 		}
-		return result;
+		return false;
 	}
-
+	
 	void printFiles(const std::string &a_sName, const std::vector<std::string> &a_files)
 	{
 		if (!a_files.empty())
 		{
+			const bool bPrintMultiline = checkPrintFilesMultiline(a_files);
 			std::string s;
+			if (bPrintMultiline)
+				logger::add(logger::EType::eMessage, a_sName);
+			else
+				s += a_sName + " ";
 			for (auto &sFile : a_files)
 			{
-				if (!s.empty())
-					s += ", ";
-				s += sFile;
+				if (bPrintMultiline)
+					logger::add(logger::EType::eMessage, sFile);
+				else
+				{
+					if (sFile != a_files.front())
+						s += ", ";
+					s += sFile;
+				}
 			}
-			logger::add(logger::EType::eMessage, a_sName + s);
+			if (!bPrintMultiline)
+				logger::add(logger::EType::eMessage, s);
 		}
 	}
 
-	void printParameters(const CParameters &a_parameters)
+
+
+	void printExtendedInfo(const CParameters &a_parameters, const std::vector<std::string> &a_compileFiles, const std::vector<std::string> &a_removedCompileFiles)
 	{
 		if (a_parameters.getHasOption(EOption::eRequiresPrecompiledHeaders))
 			logger::add(logger::EType::eMessage, "option -r is enabled. Results aren't reliable, if the header file is included by the precompiled header.");
-		printFiles("files to compile: ", a_parameters.getCompileFiles());
-		printFiles("files to ignore: ", a_parameters.getIgnoreFiles());
+		
+		if (!a_parameters.getCompileFiles().empty() || !a_parameters.getIgnoreCompileFiles().empty())
+		{
+			// the user provided options to restrict the compile files
+			// so we we want to present the results of the restriction
+			if (a_compileFiles.size() < a_removedCompileFiles.size())
+				printFiles("files to compile:", a_compileFiles);
+			else
+				printFiles("compile files to ignore:", a_removedCompileFiles);
+		}		
+		// print includes to ignore
+		printFiles("includes to ignore:", a_parameters.getIgnoreIncludes());
 		logger::add(logger::EType::eMessage, "configuration: " + a_parameters.getProjectConfiguration().m_sPlatform + "/" + a_parameters.getProjectConfiguration().m_sConfiguration);
 	}
 
@@ -61,16 +85,18 @@ namespace projectFile
 	{
 		CParameters parameters = a_parameters;
 		if (setConfiguration(parameters))
-		{
-			printParameters(parameters);
-			std::vector<std::string> compileFiles = getCompileFiles(parameters);
+		{			
+			std::vector<std::string> removedCompileFiles;
+			std::vector<std::string> compileFiles = getCompileFiles(parameters, removedCompileFiles);
 			if (!compileFiles.empty())
-			{
-				compileFile::INCLUDES_TO_IGNORE includesToIgnore = getIncludesToIgnore(parameters.getIgnoreFiles());
+			{				
+				compileFile::INCLUDES_TO_IGNORE includesToIgnore;				
+				for (auto &sFile : parameters.getIgnoreIncludes())
+					includesToIgnore.emplace_back(compileFile::CIncludeToIgnore(sFile));								
+				printExtendedInfo(parameters, compileFiles, removedCompileFiles);
 				auto upThreadPool = threads::createThreadPool();
 				if (upThreadPool)
-				{
-					//while (compileFiles.size() > 80)
+				{					
 					while (!compileFiles.empty())
 					{
 						upThreadPool->addJob(a_compiler, parameters, compileFiles.front(), includesToIgnore);

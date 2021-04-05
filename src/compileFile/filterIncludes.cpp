@@ -40,7 +40,7 @@ namespace compileFile
 			const CInclude &include = *it;
 
 			const platform::string sIncludeFileNamePure = STRING_TO_PLATFORM(include.getFile()).stem();
-			if (tools::strings::strCompareCaseInsensitive(sCompileFileNamePure, sIncludeFileNamePure))
+			if (tools::strings::compareCaseInsensitive(sCompileFileNamePure, sIncludeFileNamePure))
 				it = a_includes.erase(it);
 			else
 				it++;

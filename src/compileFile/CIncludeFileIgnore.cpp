@@ -12,7 +12,7 @@ namespace compileFile
 
 	bool CIncludeToIgnore::operator==(const CInclude &a_include) const
 	{
-		return tools::strings::strCompareCaseInsensitive(m_sInclude, a_include.getFile());
+		return tools::strings::compareCaseInsensitive(m_sInclude, a_include.getFile());
 	}
 
 	void CIncludeToIgnore::addIgnoreCase(const CFilePos &a_filePos)
