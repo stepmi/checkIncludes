@@ -37,7 +37,6 @@ Option | Explanation
 -h     | print help text
 -p:X   | platform for build process, where X is x64, x86, etc
 -c:X   | configuration for build process, where X is Debug, Release, etc
--r     | files require precompiled header file to compile. Results will not be very meaningful when using this option.
 -log   | show compiler log
 -o:X   | check only this file, where X is a c/cpp file. Files have to be specified exactly as in the project file.
 -i:X   | ignore file, where X may be a c/cpp file or a header<br>if X is a c/cpp file it is not checked<br>if X is a header, it isn't checked if this header can be removed			
