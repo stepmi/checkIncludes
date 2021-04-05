@@ -67,7 +67,7 @@ namespace compileFile
 			const std::string sStdAfx = msProjectFile.getStdAfx();
 
 			const std::string sWorkingCopyCompileFile = getCompileFileWorkingCopy(a_sCompileFile);
-			if (!msProjectFile.customize(a_sCompileFile, sWorkingCopyCompileFile, a_parameters.getHasOption(EOption::eRequiresPrecompiledHeaders)))
+			if (!msProjectFile.customize(a_sCompileFile, sWorkingCopyCompileFile))
 			{
 				logger::add(logger::EType::eError, "Couldn't read " + PLATFORM_TOSTRING(a_parameters.getProject()) + ". Error in file format.");
 				return std::unique_ptr<projectFile::IProject>(nullptr);

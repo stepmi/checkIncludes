@@ -4,7 +4,6 @@
 
 enum class EOption
 {
-	eRequiresPrecompiledHeaders,
 	eCompileLog
 };
 

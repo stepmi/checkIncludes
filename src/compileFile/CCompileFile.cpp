@@ -32,14 +32,22 @@ namespace compileFile
 		exitHandler::remove(getFilePath());
 	}
 	
-	INCLUDE_HANDLES CCompileFile::getIncludes() const
+	INCLUDE_HANDLES CCompileFile::getIncludesToCheck() const
 	{
 		INCLUDE_HANDLES result;
 		for (auto &include : m_includes)
 		{
-			if (!include.getIgnore())
+			if (!include.getIgnore() && include.getEnabled())
 				result.push_back(include.getHandle());
 		}
+		return result;
+	}
+
+	INCLUDE_HANDLES CCompileFile::getIncludes() const
+	{
+		INCLUDE_HANDLES result;
+		for (auto &include : m_includes)					
+			result.push_back(include.getHandle());		
 		return result;
 	}
 
@@ -90,7 +98,7 @@ namespace compileFile
 		return tools::filesystem::writeFile(getFilePath(), m_sSrcCode);
 	}
 
-	void CCompileFile::switchOffIncludeStdAfx()
+	/*void CCompileFile::switchOffIncludeStdAfx()
 	{
 		if (!m_includes.empty())
 		{
@@ -98,19 +106,20 @@ namespace compileFile
 			switchInclude(m_includes.front().getHandle(), false);
 			m_includes.erase(m_includes.begin()); 
 		}
-	}
+	}*/
 
 	platform::string CCompileFile::getFilePath() const
 	{
 		return getCompileFilePath(m_sCompileFileWorkingCopy, m_wsProjectFile);
 	}
 
-	bool CCompileFile::switchIncludeInSrcAndFile(const CInclude &a_include, const bool a_bSwitchOn)
+	bool CCompileFile::switchIncludeInSrcAndFile(CInclude &a_include, const bool a_bSwitchOn)
 	{
 		if (a_bSwitchOn)
 			m_sSrcCode.erase(a_include.getPos(), static_cast<size_t>(m_iLenDisableInclude));
 		else
 			m_sSrcCode.insert(a_include.getPos(), m_sDisableInclude);
+		a_include.setIsEnabled(a_bSwitchOn);
 		return tools::filesystem::writeFile(getFilePath(), m_sSrcCode);
 	}
 

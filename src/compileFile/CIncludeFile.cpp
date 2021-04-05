@@ -14,6 +14,8 @@ namespace compileFile
 	std::string CInclude::getFile() const { return m_sFile; }
 	bool CInclude::getIgnore() const { return m_bIgnore; }
 	void CInclude::setToIgnore() { m_bIgnore = true; }
+	bool CInclude::getEnabled() const { return m_bIsEnabled; }
+	void CInclude::setIsEnabled(const bool a_bValue) { m_bIsEnabled = a_bValue; }
 
 
 	void CInclude::offset(const int a_iValue)

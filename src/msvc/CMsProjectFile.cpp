@@ -55,19 +55,18 @@ namespace msvc
 		return "";
 	}
 
-	bool CMsProjectFile::customize(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy, const bool a_bUsePrecompiledHeaders)
+	bool CMsProjectFile::customize(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy)
 	{
 		removeProgramDatabaseFileName();
 		if (setIntermediateDirectory(a_sCompileFile))
 		{
 			// assuming we have a project, where pch is already on.
 			// we can just disable it, but not enable it.
-			if (a_bUsePrecompiledHeaders || disablePrecompiledHeaders())
+			if (disablePrecompiledHeaders())
 			{
 				if (setCompileFileWorkingCopy(a_sCompileFile, a_sCompileFileWorkingCopy))
-				{					
-					if (!a_bUsePrecompiledHeaders)
-						removePrecompiledHeaderFromCompiles();
+				{									
+					removePrecompiledHeaderFromCompiles();
 					return true;
 				}
 			}

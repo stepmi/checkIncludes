@@ -5,8 +5,7 @@
 
 namespace compileFile
 {
-	std::unique_ptr<ICompileFile> readCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
-		const platform::string &a_wsProjectFile, const std::string &a_sStdAfx);
+	std::unique_ptr<ICompileFile> readCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy, const platform::string &a_wsProjectFile);
 	
 }
 

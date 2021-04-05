@@ -63,10 +63,7 @@ namespace projectFile
 
 
 	void printExtendedInfo(const CParameters &a_parameters, const std::vector<std::string> &a_compileFiles, const std::vector<std::string> &a_removedCompileFiles)
-	{
-		if (a_parameters.getHasOption(EOption::eRequiresPrecompiledHeaders))
-			logger::add(logger::EType::eMessage, "option -r is enabled. Results aren't reliable, if the header file is included by the precompiled header.");
-		
+	{		
 		if (!a_parameters.getCompileFiles().empty() || !a_parameters.getIgnoreCompileFiles().empty())
 		{
 			// the user provided options to restrict the compile files

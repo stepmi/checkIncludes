@@ -14,7 +14,7 @@ namespace msvc
 		bool load(const platform::string &a_wsFile);
 		bool save(const platform::string &a_wsPath);
 				
-		bool customize(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy, const bool a_bUsePrecompiledHeaders);
+		bool customize(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy);
 		bool switchPreProcessOnly(const bool a_bOn);		
 		std::string getStdAfx() const;
 

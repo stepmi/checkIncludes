@@ -11,8 +11,7 @@ void printHelp()
 		"options:",
 		"   -h      print help text",
 		"   -p:X    platform for build process, X is x64, x86, ...",
-		"   -c:X    configuration for build process, X is Debug, Release, ...",
-		"   -r      files require precompiled header file to compile",
+		"   -c:X    configuration for build process, X is Debug, Release, ...",		
 		"   -log    show compiler log, default is off",
 		"   -o:X    check only this file, X is a c/cpp file",
 		"   -i:X    ignore file, X may be a c/cpp file or a header",
@@ -47,9 +46,7 @@ std::string getArgumentValue(const std::string &a_sArgument)
 bool parseArgument(const platform::string &a_sArgument, CParameters &a_parameters)
 {
 	const std::string sArgument = PLATFORM_TOSTRING(a_sArgument);
-	if (sArgument.find("-r") == 0)
-		a_parameters.addOption(EOption::eRequiresPrecompiledHeaders);
-	else if (sArgument.find("-log") == 0)
+	if (sArgument.find("-log") == 0)
 		a_parameters.addOption(EOption::eCompileLog);
 	else if (sArgument.find("-p:") == 0 || sArgument.find("-P:") == 0)
 	{

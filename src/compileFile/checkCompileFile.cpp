@@ -13,6 +13,8 @@
 
 namespace compileFile
 {
+	static const bool bSwitchIncludeOn = true;
+
 	enum class ETestIncludeResult
 	{
 		eCompileOk,
@@ -30,8 +32,7 @@ namespace compileFile
 
 	ETestIncludeResult testInclude(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, const HANDLE_INCLUDE &a_hInclude)
 	{
-		// disable the include
-		const bool bSwitchIncludeOn = true;
+		// disable the include		
 		if (!a_compileFile.switchInclude(a_hInclude, !bSwitchIncludeOn))
 			return ETestIncludeResult::eFileSystemError;
 
@@ -51,17 +52,58 @@ namespace compileFile
 		return ETestIncludeResult::eCompileOk;
 	}
 
-	bool buildOriginalFile(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
+	const CInclude *getPossiblePreCompiledHeader(const ICompileFile &a_compileFile)
+	{
+		auto allIncludes = a_compileFile.getIncludes();
+		if (!allIncludes.empty())
+		{
+			auto *pFirstInclude = a_compileFile.getInclude(allIncludes.front());
+			if (pFirstInclude && !pFirstInclude->getIgnore())			
+				return pFirstInclude;		
+		}
+		return nullptr;
+	}
+
+	bool buildOriginalFile(const projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, std::vector<std::string> &a_rWarnings)
 	{		
+		// first we try to switch off the 1st include
+		// very likely that is the precompiled header and the file should compile without it
+		const CInclude *pPossiblePreCompiledHeader = nullptr;
+		if (!a_project.getStdAfx().empty())
+			pPossiblePreCompiledHeader = getPossiblePreCompiledHeader(a_compileFile);
+		if (pPossiblePreCompiledHeader)
+		{
+			a_compileFile.switchInclude(pPossiblePreCompiledHeader->getHandle(), !bSwitchIncludeOn);
+			const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
+			if (eResult == compiler::EResult::eOk)
+			{
+				// file compiles without the precompiled header.
+				// we leave it in this state and return. This is our prefered case.
+				return true;
+			}
+
+			// although the first include might be the precompiled header, it is very likely needed to compile the file.
+			// So we switch it on again and try further.
+			a_compileFile.switchInclude(pPossiblePreCompiledHeader->getHandle(), bSwitchIncludeOn);
+		}
+
 		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
 		if (eResult != compiler::EResult::eOk)
 		{
+			// the file doesn't compile at all. That's an error.
 			logger::add(logger::EType::eError, "Abort checking file " + tools::strings::getQuoted(a_compileFile.getFile()) + ". File doesn't compile at all. See errors below.");
 			// we want to let the user know, why the file didn't compile
 			if (!a_parameters.getHasOption(EOption::eCompileLog))
 				a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, { compiler::EOption::eLogErrors });
-			return false;
+			return false;		
 		}
+
+		//so the file did compile, but if there was a precompiled header, that would compromise the validity of our results
+		if (pPossiblePreCompiledHeader)
+		{
+			a_rWarnings.emplace_back(a_compileFile.getFile() + " didn't compile without its precompiled header. The results may not be reliable at all.");
+		}
+
 		return true;
 	}
 
@@ -88,11 +130,9 @@ namespace compileFile
 		return sPreProcessResultFile;
 	}
 	
-	void checkCompileFileIncludes(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
-	{		
-		std::vector<std::string> messages;
-
-		auto includes = a_compileFile.getIncludes();
+	void checkCompileFileIncludes(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, std::vector<std::string> &a_rMessages)
+	{				
+		auto includes = a_compileFile.getIncludesToCheck();
 
 		// now try to disable includes
 		for (auto &hInclude : includes)
@@ -113,11 +153,10 @@ namespace compileFile
 				}
 				else if (eResult == ETestIncludeResult::eCompileOk)
 				{
-					messages.push_back(a_compileFile.getFile() + " line " + tools::strings::itos(pInclude->getLine()) + " " + pInclude->getTextForMessage() + " can be removed");
+					a_rMessages.emplace_back(a_compileFile.getFile() + " line " + tools::strings::itos(pInclude->getLine()) + " " + pInclude->getTextForMessage() + " can be removed");
 				}
 			}
-		}
-		logger::add(logger::EType::eMessage, messages);
+		}		
 	}
 
 
@@ -127,19 +166,24 @@ namespace compileFile
 		auto upProject = cloneProject(a_parameters, a_sCompileFile);
 		if (upProject)
 		{
-			auto upCompileFile = readCompileFile(a_sCompileFile, upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy(), 
-				a_parameters.getHasOption(EOption::eRequiresPrecompiledHeaders) ? std::string() : upProject->getStdAfx());
+			auto upCompileFile = readCompileFile(a_sCompileFile, upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy());
 			if (upCompileFile)
 			{
 				if (!upCompileFile->getIncludes().empty())
 				{
 					auto sPreProcessResultFile = preProcess(*upProject, a_compiler, a_parameters, *upCompileFile);
 					upCompileFile->filterIncludes(a_includesToIgnore, sPreProcessResultFile);
-					if (!upCompileFile->getIncludes().empty())
-					{
-						if (buildOriginalFile(a_compiler, a_parameters, *upCompileFile))
-						{						
-							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile);
+					if (!upCompileFile->getIncludesToCheck().empty())
+					{		
+						std::vector<std::string> warnings, messages;
+						if (buildOriginalFile(*upProject, a_compiler, a_parameters, *upCompileFile, warnings))
+						{													
+							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile, messages);
+						}
+						if (!messages.empty())
+						{
+							logger::add(logger::EType::eWarning, warnings);
+							logger::add(logger::EType::eMessage, messages);
 						}
 					}
 				}

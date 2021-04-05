@@ -16,10 +16,10 @@ namespace compileFile
 
 		const std::string &getFileWorkingCopy() const override { return m_sCompileFileWorkingCopy; }
 		const std::string &getFile() const override { return m_sCompileFile; } // the original filename
-		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }
-		void switchOffIncludeStdAfx();
+		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }		
 		
-		INCLUDE_HANDLES getIncludes() const override;		
+		INCLUDE_HANDLES getIncludesToCheck() const override;
+		INCLUDE_HANDLES getIncludes() const override;
 		const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const override;
 		bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) override;
 
@@ -35,7 +35,7 @@ namespace compileFile
 
 		CInclude *getInclude(const HANDLE_INCLUDE a_hInclude);
 		void offsetIncludesAfter(const HANDLE_INCLUDE a_hInclude, const int a_iOffset);
-		bool switchIncludeInSrcAndFile(const CInclude &a_include, const bool a_bSwitchOn);
+		bool switchIncludeInSrcAndFile(CInclude &a_include, const bool a_bSwitchOn);
 		bool switchMarkersForPreProcess(const bool a_bSwitchOn);
 		void switchMarkerForPreProcessInSrc(const CInclude &a_include, const bool a_bSwitchOn);
 		

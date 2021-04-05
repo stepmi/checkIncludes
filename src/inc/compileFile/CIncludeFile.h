@@ -23,10 +23,12 @@ namespace compileFile
 		std::string getMarkerVariableForPreProcess() const;
 		std::string getMarkerLineForPreProcess() const;
 		bool getIgnore() const; // ignore means, we don't want to enable/disable it
+		bool getEnabled() const; // was the include file disabled before
 
 		// manipulators
 		void offset(const int a_iValue);
 		void setToIgnore();
+		void setIsEnabled(const bool a_bValue);
 	private:
 		std::string m_sFile;
 
@@ -35,7 +37,7 @@ namespace compileFile
 			m_iLine = std::string::npos;
 
 		bool m_bIsSystemFile = false; // #include<>
-		//bool m_bIsEnabled = true;
+		bool m_bIsEnabled = true;
 		bool m_bIgnore = false;
 	};
 
