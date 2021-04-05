@@ -35,14 +35,14 @@ checkIncludes has to find the build tool, so for MSBuild that means, you have to
 Option | Explanation
 -------| -----------
 -h     | print help text
--p:X   | platform for build process, where X is x64, x86, etc
--c:X   | configuration for build process, where X is Debug, Release, etc
--l:f   | show all processed files
--l:i   | show checked includes for all processed files
--l:c   | show command lines for all processed files
--l:r   | show compiler output - this produces a lot of output
--o:X   | check only this file, where X is a c/cpp file. Files have to be specified exactly as in the project file.
--i:X   | ignore file, where X may be a c/cpp file or a header<br>if X is a c/cpp file it is not checked<br>if X is a header, it isn't checked if this header can be removed			
+-c:x   | configuration for build process, where x is Debug, Release, etc
+-p:x   | platform for build process, where x is x64, x86, etc
+-l:f   | logging, show all processed files
+-l:i   | logging, show checked includes for all processed files
+-l:c   | logging, show command lines for all processed files
+-l:r   | logging, show compiler output - this produces a lot of output
+-o:x   | check only this file, where x is a c/cpp file. Files have to be specified exactly as in the project file.
+-i:x   | ignore file, where x may be a c/cpp file or a header<br>if x is a c/cpp file it is not checked<br>if x is a header, it isn't checked if this header can be removed			
 
 ### examples:
 
