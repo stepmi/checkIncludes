@@ -11,7 +11,7 @@
 
 namespace msvc
 {
-	std::wstring getLastError()
+	std::string getLastError()
 	{
 		DWORD error = GetLastError();
 		if (error)
@@ -33,10 +33,10 @@ namespace msvc
 
 				LocalFree(lpMsgBuf);
 
-				return tools::strings::atow(result);
+				return result;
 			}
 		}
-		return std::wstring();
+		return std::string();
 	}
 
 	bool getHasOption(const compiler::OPTIONS &a_options, const compiler::EOption a_eOption)
@@ -47,26 +47,26 @@ namespace msvc
 	class CMsCompiler : public compiler::ICompiler
 	{
 	public:
-		explicit CMsCompiler(const std::wstring &a_wsMsBuildPath) :
+		explicit CMsCompiler(const std::string &a_wsMsBuildPath) :
 			m_wsMsBuildPath(a_wsMsBuildPath)
 		{}
 		
 		compiler::EResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, const compiler::OPTIONS &a_options) const override
 		{
-			const std::wstring wsCommandLine = getCommandLine(a_compileFile, a_eAction, a_parameters, a_options);
-			logger::add(logger::EType::eCommandLines, tools::strings::wtoa(wsCommandLine));
+			const std::string sCommandLine = getCommandLine(a_compileFile, a_eAction, a_parameters, a_options);
+			logger::add(logger::EType::eCommandLines, sCommandLine);
 			// 2nd parameter of CreateProcess() is a non-const ptr.						
-			const auto iBufSize = wsCommandLine.size() + 1;
-			std::unique_ptr<wchar_t[]> upCommandLine = std::make_unique<wchar_t[]>(iBufSize);
-			wcscpy_s(upCommandLine.get(), iBufSize, wsCommandLine.c_str());
+			const auto iBufSize = sCommandLine.size() + 1;
+			std::unique_ptr<char[]> upCommandLine = std::make_unique<char[]>(iBufSize);
+			strcpy_s(upCommandLine.get(), iBufSize, sCommandLine.c_str());
 
-			STARTUPINFOW sinfo;
+			STARTUPINFOA sinfo;
 			PROCESS_INFORMATION pinfo;
 			ZeroMemory(&sinfo, sizeof(STARTUPINFO));
 			ZeroMemory(&pinfo, sizeof(PROCESS_INFORMATION));
 			sinfo.cb = sizeof(STARTUPINFOW);
 
-			const BOOL b = CreateProcessW(NULL, upCommandLine.get(), nullptr, nullptr, false, 0, nullptr, std::filesystem::current_path().wstring().c_str(), &sinfo, &pinfo);
+			const BOOL b = CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, false, 0, nullptr, std::filesystem::current_path().string().c_str(), &sinfo, &pinfo);
 			if (b)
 			{
 				WaitForSingleObject(pinfo.hProcess, INFINITE);  // wait for process to end				
@@ -79,74 +79,74 @@ namespace msvc
 			}
 			else
 			{
-				std::wstring wsError = getLastError();				
-				logger::add(logger::EType::eError, tools::strings::wtoa(wsError) + " with:");
-				logger::add(logger::EType::eError, tools::strings::wtoa(wsCommandLine));				
+				const std::string sError = getLastError();				
+				logger::add(logger::EType::eError, sError + " with:");
+				logger::add(logger::EType::eError, sCommandLine);				
 				return compiler::EResult::eError;
 			}
 		}
 	private:
-		std::wstring getTargetText(const compiler::EAction a_eAction) const
+		std::string getTargetText(const compiler::EAction a_eAction) const
 		{
-			std::wstring ws = L"/t:";
+			std::string ws = "/t:";
 			if (a_eAction == compiler::EAction::eCompile)
-				return ws + L"ClCompile";
+				return ws + "ClCompile";
 			else if (a_eAction == compiler::EAction::eReBuild)
-				return ws + L"Clean;ClCompile";
+				return ws + "Clean;ClCompile";
 			else
-				return L"";
+				return "";
 		}
 
-		std::wstring getOptionsText(const compiler::OPTIONS &a_options) const
+		std::string getOptionsText(const compiler::OPTIONS &a_options) const
 		{
-			std::wstring ws;
+			std::string ws;
 			if (getHasOption(a_options, compiler::EOption::eLogErrors))
-				ws += L"/nologo /verbosity:quiet";
+				ws += "/nologo /verbosity:quiet";
 			else if (!getHasOption(a_options, compiler::EOption::eLogAll))
-				ws += L"/nologo /noconlog"; // / m";			
+				ws += "/nologo /noconlog"; // / m";			
 			return ws;
 		}
 
-		std::wstring getConfiguration(const CParameters &a_parameters) const
+		std::string getConfiguration(const CParameters &a_parameters) const
 		{
-			return L"/p:Configuration=" + tools::strings::atow(a_parameters.getProjectConfiguration().m_sConfiguration) + L";Platform=" + tools::strings::atow(a_parameters.getProjectConfiguration().m_sPlatform);
+			return "/p:Configuration=" + a_parameters.getProjectConfiguration().m_sConfiguration + ";Platform=" + a_parameters.getProjectConfiguration().m_sPlatform;
 		}
 
-		std::wstring getAdditionalProperties(const compiler::EAction a_eAction) const
+		std::string getAdditionalProperties(const compiler::EAction a_eAction) const
 		{
-			return L"";
+			return "";
 		}
 
-		std::wstring getCommandLine(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, const compiler::OPTIONS &a_options) const
+		std::string getCommandLine(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, const compiler::OPTIONS &a_options) const
 		{
 			return getQuoted(m_wsMsBuildPath) + m_wsWhiteSpace +
-				getQuoted(a_compileFile.getProjectFileWorkingCopy()) + m_wsWhiteSpace +
+				getQuoted(a_compileFile.getProjectFileWorkingCopy().string()) + m_wsWhiteSpace +
 				getConfiguration(a_parameters) + m_wsWhiteSpace +
 				getTargetText(a_eAction) + m_wsWhiteSpace +
 				getOptionsText(a_options) + m_wsWhiteSpace +
 				getAdditionalProperties(a_eAction) + m_wsWhiteSpace +
-				L"/p:SelectedFiles=" + getQuoted(tools::strings::atow(a_compileFile.getFileWorkingCopy()));
+				"/p:SelectedFiles=" + getQuoted(a_compileFile.getFileWorkingCopy());
 		}
 
-		static std::wstring getQuoted(const std::wstring &a)
+		static std::string getQuoted(const std::string &a)
 		{
-			const std::wstring m_wsQuote = L"\"";
+			const std::string m_wsQuote = "\"";
 			return m_wsQuote + a + m_wsQuote;
 		}
 
 	private:
-		const std::wstring m_wsWhiteSpace = L" ";
-		std::wstring m_wsMsBuildPath;
+		const std::string m_wsWhiteSpace = " ";
+		std::string m_wsMsBuildPath;
 	};
 
 	std::unique_ptr<compiler::ICompiler> createMsCompiler()
 	{
-		LPWSTR lpFilePart = nullptr;
-		wchar_t wsFileName[MAX_PATH];
+		LPSTR lpFilePart = nullptr;
+		char sFileName[MAX_PATH];
 
-		if (SearchPathW(NULL, L"MSBuild", L".exe", MAX_PATH, wsFileName, &lpFilePart))
+		if (SearchPathA(NULL, "MSBuild", ".exe", MAX_PATH, sFileName, &lpFilePart))
 		{
-			return std::make_unique<CMsCompiler>(wsFileName);
+			return std::make_unique<CMsCompiler>(sFileName);
 		}
 		else
 		{
