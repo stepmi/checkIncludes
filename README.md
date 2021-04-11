@@ -37,12 +37,13 @@ Option | Explanation
 -h     | print help text
 -c:x   | configuration for build process, where x is Debug, Release, etc
 -p:x   | platform for build process, where x is x64, x86, etc
+-i:x   | ignore include. don't check if the specified header(s) x can be removed
+-s:x   | specify compile file. check the specified files(s) x only
+-r:x   | remove compile file. ignore the specified files(s) x
 -l:f   | logging, show all processed files
 -l:i   | logging, show checked includes for all processed files
 -l:c   | logging, show command lines for all processed files
 -l:r   | logging, show compiler output - this produces a lot of output
--o:x   | check only this file, where x is a c/cpp file. Files have to be specified exactly as in the project file.
--i:x   | ignore file, where x may be a c/cpp file or a header<br>if x is a c/cpp file it is not checked<br>if x is a header, it isn't checked if this header can be removed			
 
 ### examples:
 
@@ -50,11 +51,11 @@ Option | Explanation
 
 Checks all files of the project with default platform and configuration.
 
-> checkIncludes -p:x64 -c:Release -i:src\tools\filesystem.cpp -i:string ../checkIncludes/checkIncludes.vcxproj
+> checkIncludes -p:x64 -c:Release -r:src\tools\filesystem.cpp -i:string ../checkIncludes/checkIncludes.vcxproj
 
 Checks all files of the project, except tools/filesystem.cpp. Use platform x64 and configuration Release. #include "string" is not tested at all.
 
-> checkIncludes -o:src\tools\filesystem.cpp -o:src\tools\strings.cpp ../checkIncludes/checkIncludes.vcxproj
+> checkIncludes -s:src\tools\filesystem.cpp -s:src\tools\strings.cpp ../checkIncludes/checkIncludes.vcxproj
 
 Checks only tools/filesystem.cpp and tools/strings.cpp.
 

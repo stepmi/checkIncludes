@@ -5,35 +5,16 @@
 
 void printHelp()
 {
-	std::vector<std::string> msg =
+	const std::vector<std::string> msg =
 	{		
 		"checkIncludes [options] projectfile",
 		"",
-		"options:",
-		"   -h      print help text",
-		"   -p:X    platform for build process, X is x64, x86, ...",
-		"   -c:X    configuration for build process, X is Debug, Release, ...",
-		"   -l:f    show all processed files",
-		"   -l:i    show checked includes for all processed files",
-		"   -l:c    show command lines for all processed files",
-		"   -l:r    show compiler output - this produces a lot of output",
-		"   -o:X    check only this file, X is a c/cpp file",
-		"   -i:X    ignore file, X may be a c/cpp file or a header",
-		"           if X is a c/cpp file it is not checked",
-		"           if X is a header, it isn't checked if this header can be removed",
-		"example:",
-		">checkIncludes -p:x64 -c:Release -i:tools/enumFiles.cpp -i:vector.h checkIncludes.vcxproj",
-		""
-
-		// TODO: implement new options (c+, c-).
-		/*"checkIncludes [options] projectfile",
-		"",
 		"options:",		
-		"   -c:x    configuration for build process, x is Debug, Release, etc",
-		"   -p:x    platform for build process, x is x64, x86, etc",		
-		"   -i:x    ignore include, it isn't checked if the specified header(s) x can be removed",
-		"   -c+:x   compile file add, check the specified files(s) x only",
-		"   -c-:x   compile file ignore, ignore the specified files(s) x",
+		"   -c:x    configuration for build process. x is Debug, Release, etc",
+		"   -p:x    platform for build process. x is x64, x86, etc",		
+		"   -i:x    ignore include. don't check if the specified header(s) x can be removed",
+		"   -s:x    specify compile file. check the specified files(s) x only",
+		"   -r:x    remove compile file. ignore the specified files(s) x",
 		"   -l:f    logging, show all processed files",
 		"   -l:i    logging, show checked includes for all processed files",
 		"   -l:c    logging, show command lines for all processed files",
@@ -41,8 +22,8 @@ void printHelp()
 		"   -h      print help text",
 		
 		"example:",
-		">checkIncludes -p:x64 -c:Release -i:tools/enumFiles.cpp -i:vector.h checkIncludes.vcxproj",
-		""*/
+		">checkIncludes -p:x64 -c:Release -r:tools/enumFiles.cpp -i:vector.h checkIncludes.vcxproj",
+		""
 	};
 		
 	logger::add(logger::EType::eMessage, msg);
@@ -84,51 +65,59 @@ bool parseArgument(const platform::string &a_sArgument, CParameters &a_parameter
 			bArgumentOK = false;
 		}
 	}
-	else if (sArgument.size() == 4 && (sArgument.find("-l:") == 0 || sArgument.find("-L:") == 0))
+	else if (sArgument.size() == 4 && tools::strings::beginsWithCaseInsensitive(sArgument, "-l:"))
 	{
-		if (sArgument[3] == 'f' || sArgument[3] == 'F')
+		// logging options
+		const char cOption = sArgument[3];
+		if (tools::strings::compareCaseInsensitive(cOption, 'f'))
 			logger::allowType(logger::EType::eProcessedFiles);
-		else if (sArgument[3] == 'i' || sArgument[3] == 'I')
+		else if (tools::strings::compareCaseInsensitive(cOption, 'i'))
 			logger::allowType(logger::EType::eCheckedIncludes);
-		else if (sArgument[3] == 'c' || sArgument[3] == 'C')
+		else if (tools::strings::compareCaseInsensitive(cOption, 'c'))
 			logger::allowType(logger::EType::eCommandLines);
-		else if (sArgument[3] == 't' || sArgument[3] == 'T')
+		else if (tools::strings::compareCaseInsensitive(cOption, 't'))
 			logger::allowType(logger::EType::eDebugThreads); // this isn't documented.	
-		else if (sArgument[3] == 'r' || sArgument[3] == 'R')
+		else if (tools::strings::compareCaseInsensitive(cOption, 'r'))
 			a_parameters.addOption(EOption::eCompileLog);
 		else		
 			bArgumentOK = false;
 	}
-	else if (sArgument.find("-p:") == 0 || sArgument.find("-P:") == 0)
+	else if (tools::strings::beginsWithCaseInsensitive(sArgument, "-p:"))
 	{
+		// platform
 		auto configuration = a_parameters.getProjectConfiguration();
 		configuration.m_sPlatform = getArgumentValue(sArgument);
 		a_parameters.setProjectConfiguration(configuration);
 	}
-	else if (sArgument.find("-c:") == 0 || sArgument.find("-C:") == 0)
+	else if (tools::strings::beginsWithCaseInsensitive(sArgument, "-c:"))
 	{			
+		// configuration
 		auto configuration = a_parameters.getProjectConfiguration();
 		configuration.m_sConfiguration = getArgumentValue(sArgument);
 		a_parameters.setProjectConfiguration(configuration);
 	}
-	else if (sArgument.find("-o:") == 0 || sArgument.find("-O:") == 0)
+	else if (tools::strings::beginsWithCaseInsensitive(sArgument, "-s:"))
 	{
+		// specify compile file
 		auto sValue = getArgumentValue(sArgument);
 		if (!sValue.empty())
 			a_parameters.addCompileFile(sValue);
 	}
-	else if (sArgument.find("-i:") == 0 || sArgument.find("-I:") == 0)
+	else if (tools::strings::beginsWithCaseInsensitive(sArgument, "-r:"))
 	{
+		// remove compile file
 		auto sValue = getArgumentValue(sArgument);
-		if (!sValue.empty())
-		{
-			if (tools::filename::isIncludeFile(sValue))
-				a_parameters.addIgnoreInclude(sValue);
-			else
-				a_parameters.addIgnoreCompileFile(sValue);
-		}
+		if (!sValue.empty())		
+			a_parameters.addIgnoreCompileFile(sValue);		
 	}
-	else if (sArgument.find("-h") == 0 || sArgument.find("-H") == 0)
+	else if (tools::strings::beginsWithCaseInsensitive(sArgument, "-i:"))
+	{
+		// ignore include file
+		auto sValue = getArgumentValue(sArgument);
+		if (!sValue.empty())		
+			a_parameters.addIgnoreInclude(sValue);			
+	}
+	else if (tools::strings::beginsWithCaseInsensitive(sArgument, "-h:"))
 	{
 		a_parameters.setPrintHelp();
 	}

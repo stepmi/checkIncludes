@@ -47,10 +47,15 @@ namespace tools
 		std::wstring atow(const std::string& a_Src);
 		std::string wtoa(const std::wstring& a_Src);
 #endif
-
+		
+		bool compareCaseInsensitive(const char a, const char b);
 		bool compareCaseInsensitive(const std::string &a, const std::string &b);
 		bool compareCaseInsensitive(const platform::string &a, const platform::string &b);
+		std::string::size_type findCaseInsensitive(const std::string &a_sSrc, const std::string &a_sText);
+		bool beginsWithCaseInsensitive(const std::string &a_sSrc, const std::string &a_sText);
+
 		bool compareUserFileName(const std::string &a_sFileFromProject, const std::string &a_sFileProvidedByUser);
+
 
 	}
 }
