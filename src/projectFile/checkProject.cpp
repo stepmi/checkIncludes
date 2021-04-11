@@ -78,7 +78,7 @@ namespace projectFile
 		logger::add(logger::EType::eMessage, "configuration: " + a_parameters.getProjectConfiguration().m_sPlatform + "/" + a_parameters.getProjectConfiguration().m_sConfiguration);
 	}
 
-	void checkProject(const compiler::ICompiler &a_compiler, const CParameters &a_parameters)
+	void checkProject(const CParameters &a_parameters)
 	{
 		CParameters parameters = a_parameters;
 		if (setConfiguration(parameters))
@@ -96,7 +96,7 @@ namespace projectFile
 				{					
 					while (!compileFiles.empty())
 					{
-						upThreadPool->addJob(a_compiler, parameters, compileFiles.front(), includesToIgnore);
+						upThreadPool->addJob(parameters, compileFiles.front(), includesToIgnore);
 						compileFiles.erase(compileFiles.begin());
 					}
 					upThreadPool->waitForAll();

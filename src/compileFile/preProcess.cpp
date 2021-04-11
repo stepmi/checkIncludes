@@ -8,7 +8,7 @@ namespace preprocess
 
 	platform::string getPreProcessResultPath(const projectFile::IProject &a_project, const CParameters &a_parameters, compileFile::ICompileFile &a_compileFile)
 	{
-		if (a_parameters.getCompilerType() == ECompilerType::eMsVc)
+		if (a_parameters.getProjectType() == EProjectType::eMsBuild)
 		{
 #ifdef _WIN32
 			auto sCompileFileRelative = STRING_TO_PLATFORM(a_compileFile.getFileWorkingCopy());			

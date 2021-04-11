@@ -3,6 +3,7 @@
 #include <memory>
 #include <set>
 #include "tools/interface.h"
+#include "main/ECompilerType.h"
 
 class CParameters;
 
@@ -39,6 +40,7 @@ namespace compiler
 	{
 		virtual ~ICompiler() = default;		
 		virtual EResult run(const compileFile::ICompileFile &a_compileFile, const EAction a_eAction, const CParameters &a_parameters, const OPTIONS &a_options) const = 0;
+		virtual ECompilerType getType() const = 0;
 	};		
 
 }

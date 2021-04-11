@@ -16,7 +16,7 @@ namespace compileFile
 		virtual ~ICompileFile() = default;
 
 		virtual const std::string &getFileWorkingCopy() const = 0;
-		virtual const std::string &getFile() const = 0; // the original filename
+		virtual const std::string &getFile() const = 0; // the original filename		
 		virtual const platform::string &getProjectFileWorkingCopy() const = 0;
 		virtual INCLUDE_HANDLES getIncludesToCheck() const = 0; // returns only includes that aren't set to ignore
 		virtual INCLUDE_HANDLES getIncludes() const = 0; // returns all includes

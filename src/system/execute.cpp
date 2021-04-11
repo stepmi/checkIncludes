@@ -40,8 +40,11 @@ namespace execute
 	}
 #endif
 
-	EResult run(const std::string &a_sCommandline)
+	EResult run(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
 	{
+		platform::string sWorkingDir = a_sWorkingDir;
+		if (sWorkingDir.empty())
+			sWorkingDir = std::filesystem::current_path();
 #ifdef _WIN32		
 		// 2nd parameter of CreateProcess() is a non-const ptr.						
 		const auto iBufSize = a_sCommandline.size() + 1;
@@ -54,7 +57,7 @@ namespace execute
 		ZeroMemory(&pinfo, sizeof(PROCESS_INFORMATION));
 		sinfo.cb = sizeof(STARTUPINFOW);
 
-		if (CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, false, 0, nullptr, std::filesystem::current_path().string().c_str(), &sinfo, &pinfo))
+		if (CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, false, 0, nullptr, sWorkingDir.string().c_str(), &sinfo, &pinfo))
 		{
 			WaitForSingleObject(pinfo.hProcess, INFINITE);  // wait for process to end				
 			DWORD dwExitCode = 0;
@@ -69,8 +72,28 @@ namespace execute
 			const std::string sError = getLastError();
 			logger::add(logger::EType::eError, sError + " with:");
 			logger::add(logger::EType::eError, a_sCommandline);
-		}		
+		}
 #endif
 		return EResult::eError;
+	}
+	
+	std::string getCommandPath(const std::string &a_sCommand)
+	{
+#ifdef _WIN32
+		LPSTR lpFilePart = nullptr;
+		char sFileName[MAX_PATH];
+		if (SearchPathA(NULL, std::filesystem::path(a_sCommand).stem().string().c_str(),
+			std::filesystem::path(a_sCommand).extension().string().c_str(),
+			MAX_PATH, sFileName, &lpFilePart))
+		{
+			return sFileName;
+		}
+		else
+			return std::string();
+#else
+		return a_sCommand;
+#endif
+		
+
 	}
 }

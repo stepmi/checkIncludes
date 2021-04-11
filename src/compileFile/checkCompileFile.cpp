@@ -10,6 +10,7 @@
 #include "cloneProject.h"
 #include "preProcess.h"
 #include "projectFile/IThread.h"
+#include "compiler/createCompiler.h"
 
 namespace compileFile
 {
@@ -161,45 +162,49 @@ namespace compileFile
 
 
 
-	void checkCompileFile(projectFile::IThread &a_thread, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, const std::string a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore)
+	void checkCompileFile(projectFile::IThread &a_thread, const CParameters &a_parameters, const std::string a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore)
 	{
-		logger::add(logger::EType::eProcessedFiles, "Processing file " + tools::strings::getQuoted(a_sCompileFile));
-		auto upProject = cloneProject(a_parameters, a_sCompileFile);
-		if (upProject)
-		{			
-			auto upCompileFile = readCompileFile(a_sCompileFile, upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy());
-			if (upCompileFile)
+		auto upCompiler = compiler::createCompiler(ECompilerType::eMsVc); // TODO, we have to store a compiler type for each compile file
+		if (upCompiler)
+		{
+			logger::add(logger::EType::eProcessedFiles, "Processing file " + tools::strings::getQuoted(a_sCompileFile));
+			auto upProject = cloneProject(a_parameters, a_sCompileFile);
+			if (upProject)
 			{
-				if (!upCompileFile->getIncludes().empty())
+				auto upCompileFile = readCompileFile(a_sCompileFile, upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy());
+				if (upCompileFile)
 				{
-					auto sPreProcessResultFile = preProcess(*upProject, a_compiler, a_parameters, *upCompileFile);
-					upCompileFile->filterIncludes(a_includesToIgnore, sPreProcessResultFile);
-					if (!upCompileFile->getIncludesToCheck().empty())
-					{		
-						std::vector<std::string> warnings, messages, checkedIncludes;
-						if (buildOriginalFile(*upProject, a_compiler, a_parameters, *upCompileFile, warnings))
-						{													
-							checkCompileFileIncludes(a_compiler, a_parameters, *upCompileFile, messages, checkedIncludes);
-						}
-						if (!messages.empty())
+					if (!upCompileFile->getIncludes().empty())
+					{
+						auto sPreProcessResultFile = preProcess(*upProject, *upCompiler, a_parameters, *upCompileFile);
+						upCompileFile->filterIncludes(a_includesToIgnore, sPreProcessResultFile);
+						if (!upCompileFile->getIncludesToCheck().empty())
 						{
-							logger::add(logger::EType::eWarning, warnings);
-							logger::add(logger::EType::eCheckedIncludes, checkedIncludes);
-							logger::add(logger::EType::eMessage, messages);
+							std::vector<std::string> warnings, messages, checkedIncludes;
+							if (buildOriginalFile(*upProject, *upCompiler, a_parameters, *upCompileFile, warnings))
+							{
+								checkCompileFileIncludes(*upCompiler, a_parameters, *upCompileFile, messages, checkedIncludes);
+							}
+							if (!messages.empty())
+							{
+								logger::add(logger::EType::eWarning, warnings);
+								logger::add(logger::EType::eCheckedIncludes, checkedIncludes);
+								logger::add(logger::EType::eMessage, messages);
+							}
 						}
 					}
+				}
+				else
+				{
+					logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_sCompileFile) + ". Couldn't read file");
 				}
 			}
 			else
 			{
-				logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_sCompileFile) + ". Couldn't read file");
+				logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_sCompileFile) + ". Couldn't clone project file.");
 			}
+			a_thread.setIsFinished();
 		}
-		else
-		{
-			logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_sCompileFile) + ". Couldn't clone project file.");
-		}
-		a_thread.setIsFinished();
 	}
 
 

@@ -5,11 +5,6 @@
 #include <memory>
 #include "tools/interface.h"
 
-namespace compiler
-{
-	ci_interface ICompiler;
-}
-
 namespace threads
 {	
 
@@ -17,7 +12,7 @@ namespace threads
 	{
 		virtual ~IThreadPool() = default;
 		
-		virtual void addJob(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, const std::string a_sCompileFile, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore) = 0;
+		virtual void addJob(const CParameters &a_parameters, const std::string a_sCompileFile, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore) = 0;
 		virtual void waitForAll() = 0;
 	};
 

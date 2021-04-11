@@ -172,6 +172,7 @@
     <ClCompile Include="src\compiler\createCompiler.cpp" />
     <ClCompile Include="src\main\commandline.cpp" />
     <ClCompile Include="src\main\main.cpp" />
+    <ClCompile Include="src\make\CMakeFile.cpp" />
     <ClCompile Include="src\msvc\CMsCompiler.cpp" />
     <ClCompile Include="src\msvc\CMsProject.cpp" />
     <ClCompile Include="src\msvc\CMsProjectFile.cpp" />
@@ -210,6 +211,8 @@
     <ClInclude Include="src\inc\main\CProjectConfiguration.h" />
     <ClInclude Include="src\inc\main\ECompilerType.h" />
     <ClInclude Include="src\inc\main\EOption.h" />
+    <ClInclude Include="src\inc\main\EProjectType.h" />
+    <ClInclude Include="src\inc\make\CMakeFile.h" />
     <ClInclude Include="src\inc\msvc\CMsCompiler.h" />
     <ClInclude Include="src\inc\msvc\CMsProject.h" />
     <ClInclude Include="src\inc\msvc\CMsProjectFile.h" />

@@ -36,7 +36,7 @@ bool checkParseResult(const CParameters &a_parameters)
 		logger::add(logger::EType::eError, "Missing project file.");
 		return false;
 	}
-	else if (PLATFORM_TOSTRING(a_parameters.getProject()).find(".vcxproj") == std::string::npos)
+	else if (a_parameters.getProjectType() == EProjectType::eUnknown)
 	{
 		logger::add(logger::EType::eError, PLATFORM_TOSTRING(a_parameters.getProject()) + " is not a valid project file.");
 		return false;
@@ -51,6 +51,16 @@ std::string getArgumentValue(const std::string &a_sArgument)
 	return a_sArgument.substr(iValueStart);	
 }
 
+EProjectType getProjectTypeFromFileName(const std::string &a_sFileName)
+{
+	const std::string sExtension = std::filesystem::path(a_sFileName).extension().string();
+	if (tools::strings::compareCaseInsensitive(sExtension, ".vcxproj"))
+		return EProjectType::eMsBuild;
+	else if (tools::strings::compareCaseInsensitive(sExtension, ".mak"))
+		return EProjectType::eMakeFile;
+	return EProjectType::eUnknown;
+}
+
 bool parseArgument(const platform::string &a_sArgument, CParameters &a_parameters)
 {
 	const std::string sArgument = PLATFORM_TOSTRING(a_sArgument);	
@@ -58,7 +68,10 @@ bool parseArgument(const platform::string &a_sArgument, CParameters &a_parameter
 	if (sArgument.size() > 0 && sArgument.front() != '-')
 	{
 		if (a_parameters.getProject().empty())
+		{			
+			a_parameters.setProjectType(getProjectTypeFromFileName(sArgument));
 			a_parameters.setProject(sArgument);
+		}
 		else
 		{
 			logger::add(logger::EType::eError, "More than one project file specified.");

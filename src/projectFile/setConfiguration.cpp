@@ -10,7 +10,7 @@ namespace projectFile
 {
 	bool setConfiguration(CParameters &a_parameters)
 	{
-		if (a_parameters.getCompilerType() == ECompilerType::eMsVc)
+		if (a_parameters.getProjectType() == EProjectType::eMsBuild)
 		{
 #ifdef  _WIN32
 			msvc::CMsProjectFileQuery msProjectFileQuery;

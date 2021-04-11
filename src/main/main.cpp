@@ -1,6 +1,5 @@
 #include <string>
 #include "system/exit.h"
-#include "compiler/createCompiler.h"
 #include "system/logger.h"
 #include <chrono>
 #include "tools/strings.h"
@@ -27,16 +26,12 @@ int main(int argc, char* argv[])
 	if (upParameter)
 	{
 		// all logging is be done in function code	
-		auto upCompiler = compiler::createCompiler(upParameter->getCompilerType());
-		if (upCompiler)
-		{
-			exitHandler::initExitHandler();
-			projectFile::checkProject(*upCompiler, *upParameter);
-
-			const TIME_POINT tpEnd = std::chrono::system_clock::now();
-			auto sDuration = tools::strings::secondsToHours(std::chrono::duration_cast<std::chrono::seconds>(tpEnd - tpStart).count());
-			logger::add(logger::EType::eMessage, "Time taken: " + sDuration + " h");
-		}		
+		exitHandler::initExitHandler();
+		projectFile::checkProject(*upParameter);
+		
+		const TIME_POINT tpEnd = std::chrono::system_clock::now();
+		auto sDuration = tools::strings::secondsToHours(std::chrono::duration_cast<std::chrono::seconds>(tpEnd - tpStart).count());
+		logger::add(logger::EType::eMessage, "Time taken: " + sDuration + " h");				
 	}
 
 	return 0;

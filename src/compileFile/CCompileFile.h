@@ -2,6 +2,7 @@
 
 #include "compileFile/ICompileFile.h"
 #include "compileFile/CIncludeFile.h"
+#include "main/ECompilerType.h"
 
 namespace compileFile
 {
@@ -15,10 +16,10 @@ namespace compileFile
 		~CCompileFile();
 
 		const std::string &getFileWorkingCopy() const override { return m_sCompileFileWorkingCopy; }
-		const std::string &getFile() const override { return m_sCompileFile; } // the original filename
+		const std::string &getFile() const override { return m_sCompileFile; } // the original filename		
 		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }		
 		
-		INCLUDE_HANDLES getIncludesToCheck() const override;
+		INCLUDE_HANDLES getIncludesToCheck() const override;		
 		INCLUDE_HANDLES getIncludes() const override;
 		const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const override;
 		bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) override;
@@ -48,7 +49,7 @@ namespace compileFile
 		std::string m_sSrcCode;
 
 		const std::string m_sDisableInclude = "// disabled by checkIncludes ";
-		const int m_iLenDisableInclude = 0;
+		const int m_iLenDisableInclude = 0;		
 	};
 
 	platform::string getCompileFilePath(const std::string &a_sCompileFile, const platform::string &a_wsProjectFile);

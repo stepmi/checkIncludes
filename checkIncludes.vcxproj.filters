@@ -62,6 +62,12 @@
     <Filter Include="Source Files\xml">
       <UniqueIdentifier>{73ff6070-57b8-4759-901b-a64a41b288b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\inc\make">
+      <UniqueIdentifier>{ac27baf9-0642-4537-85d3-bfd85cc38ea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\make">
+      <UniqueIdentifier>{4761db38-51df-432d-9f8b-3107c8a1b411}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\parser\tokens.cpp">
@@ -153,6 +159,9 @@
     </ClCompile>
     <ClCompile Include="src\system\execute.cpp">
       <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="src\make\CMakeFile.cpp">
+      <Filter>Source Files\make</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +296,12 @@
     </ClInclude>
     <ClInclude Include="src\inc\system\execute.h">
       <Filter>Source Files\inc\system</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\make\CMakeFile.h">
+      <Filter>Source Files\inc\make</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\main\EProjectType.h">
+      <Filter>Source Files\inc\main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

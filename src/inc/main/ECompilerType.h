@@ -2,5 +2,7 @@
 
 enum class ECompilerType
 {
-	eMsVc
+	eUnknown,
+	eMsVc,
+	eGcc
 };

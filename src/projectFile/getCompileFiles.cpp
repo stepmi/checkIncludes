@@ -63,7 +63,7 @@ namespace projectFile
 	std::vector<std::string> getCompileFiles(const CParameters &a_parameters, std::vector<std::string> &a_rRemovedCompileFiles)
 	{
 		std::vector<std::string> compileFiles;
-		if (a_parameters.getCompilerType() == ECompilerType::eMsVc)
+		if (a_parameters.getProjectType() == EProjectType::eMsBuild)
 		{
 #ifdef  _WIN32
 			msvc::CMsProjectFileQuery msProjectFileQuery;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "tools/platforms.h"
 
 namespace execute
 {
@@ -10,6 +11,9 @@ namespace execute
 		eFailed,	// program returned value != 0
 		eError		// program couldn't even be started
 	};
+		
+	// use current working dir, if a_sWorkingDir is empty
+	EResult run(const std::string &a_sCommandline, const platform::string &a_sWorkingDir);
 
-	EResult run(const std::string &a_sCommandline);
+	std::string getCommandPath(const std::string &a_sCommand);
 }

@@ -4,7 +4,7 @@
 #include <string>
 #include <set>
 #include "tools/find.h"
-#include "ECompilerType.h"
+#include "EProjectType.h"
 #include "EOption.h"
 #include "CProjectConfiguration.h"
 
@@ -18,10 +18,11 @@ public:
 	const std::vector<std::string> &getIgnoreIncludes() const { return m_ignoreIncludes; }
 	const std::vector<std::string> &getCompileFiles() const { return m_compileFiles; }
 	bool getHasOption(const EOption a_eOption) const { return tools::find(m_options, a_eOption); }
-	ECompilerType getCompilerType() const { return ECompilerType::eMsVc; }
+	EProjectType getProjectType() const { return m_eType; }
 	bool getPrintHelp() const { return m_bPrintHelp; }
 
-	void setProject(platform::string a_wsValue) { m_wsProject = a_wsValue; }
+	void setProject(const platform::string a_wsValue) { m_wsProject = a_wsValue; }
+	void setProjectType(const EProjectType a_Value) { m_eType = a_Value; }
 	void setProjectConfiguration(const CProjectConfiguration &a_value) { m_projectConfiguration = a_value; }
 	void addIgnoreCompileFile(const std::string &a_sValue) { m_ignoreCompileFiles.push_back(a_sValue); }
 	void addIgnoreInclude(const std::string &a_sValue) { m_ignoreIncludes.push_back(a_sValue); }
@@ -38,5 +39,6 @@ private:
 
 	OPTIONS m_options;
 	bool m_bPrintHelp = false;
+	EProjectType m_eType = EProjectType::eUnknown;
 };
 

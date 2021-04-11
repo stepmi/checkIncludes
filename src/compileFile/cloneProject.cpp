@@ -51,7 +51,7 @@ namespace compileFile
 
 	std::unique_ptr<projectFile::IProject> cloneProject(const CParameters &a_parameters, const std::string &a_sCompileFile)
 	{
-		if (a_parameters.getCompilerType() == ECompilerType::eMsVc)
+		if (a_parameters.getProjectType() == EProjectType::eMsBuild)
 		{
 #ifdef  _WIN32
 			msvc::CMsProjectFile msProjectFile(a_parameters);

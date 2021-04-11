@@ -72,6 +72,7 @@ add_executable(checkIncludes "")
 #sub directories
 fncAddSubDir(compileFile)
 fncAddSubDir(compiler)
+fncAddSubDir(make)
 fncAddSubDir(main)
 fncAddSubDir(parser)
 fncAddSubDir(projectFile)

@@ -1,14 +1,11 @@
 #include "msvc/CMsCompiler.h"
 #include <string>
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#include <windows.h>
 #include "system/logger.h"
 #include "tools/strings.h"
 #include "tools/find.h"
 #include "main/CParameters.h"
 #include "compileFile/ICompileFile.h"
 #include "system/execute.h"
-
 
 namespace msvc
 {
@@ -25,12 +22,17 @@ namespace msvc
 			m_wsMsBuildPath(a_wsMsBuildPath)
 		{}
 		
+		ECompilerType getType() const override
+		{
+			return ECompilerType::eMsVc;
+		}
+
 		compiler::EResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, const compiler::OPTIONS &a_options) const override
 		{
 			const std::string sCommandLine = getCommandLine(a_compileFile, a_eAction, a_parameters, a_options);
 			logger::add(logger::EType::eCommandLines, sCommandLine);
 
-			auto eResult = execute::run(sCommandLine);
+			auto eResult = execute::run(sCommandLine, platform::string());
 			if (eResult == execute::EResult::eOk)
 				return compiler::EResult::eOk;
 			else if (eResult == execute::EResult::eFailed)
@@ -94,17 +96,11 @@ namespace msvc
 
 	std::unique_ptr<compiler::ICompiler> createMsCompiler()
 	{
-		LPSTR lpFilePart = nullptr;
-		char sFileName[MAX_PATH];
-
-		if (SearchPathA(NULL, "MSBuild", ".exe", MAX_PATH, sFileName, &lpFilePart))
-		{
-			return std::make_unique<CMsCompiler>(sFileName);
-		}
+		const std::string sMsBuildPath = execute::getCommandPath("MSBuild.exe");
+		if (!sMsBuildPath.empty())
+			return std::make_unique<CMsCompiler>(sMsBuildPath);
 		else
-		{
 			logger::add(logger::EType::eError, "Couldn't find MsBuild.exe");
-		}	
 		return std::unique_ptr<compiler::ICompiler>(nullptr);
 	}
 
