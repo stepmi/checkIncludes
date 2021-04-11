@@ -1,6 +1,7 @@
 #include "getCompileFiles.h"
 #include "system/logger.h"
 #include "tools/strings.h"
+#include "make/CMakeFile.h"
 #ifdef  _WIN32
 	#include "msvc/CMsProjectFileQuery.h"
 #endif
@@ -75,6 +76,12 @@ namespace projectFile
 
 			compileFiles = msProjectFileQuery.getCompileFiles();
 #endif
+		}
+		else if (a_parameters.getProjectType() == EProjectType::eMakeFile)
+		{
+			// TODO: we need a list of compile files with more information for each file
+			// this is just testing code
+			compileFiles = make::getMakeCommandLines(a_parameters.getProject().string());
 		}
 
 

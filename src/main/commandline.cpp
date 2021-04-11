@@ -41,6 +41,10 @@ bool checkParseResult(const CParameters &a_parameters)
 		logger::add(logger::EType::eError, PLATFORM_TOSTRING(a_parameters.getProject()) + " is not a valid project file.");
 		return false;
 	}
+
+	if (a_parameters.getProjectType() == EProjectType::eMakeFile) // TODO
+		logger::add(logger::EType::eWarning, "Checking projects with makefiles is under development for now.");
+
 	return true;
 }
 

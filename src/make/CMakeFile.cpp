@@ -28,7 +28,8 @@ namespace make
 		}
 
 		const std::filesystem::path sResultFile = sWorkingDir / "checkIncludes_make_result.txt";
-		const std::string sCommandLine = sMakePath + " -n > " + sResultFile.string();
+		// TODO: this doesn't work. We have to find another method to redirect the output.
+		const std::string sCommandLine = sMakePath + " -n "; // > " + sResultFile.string();
 		
 		auto eResult = execute::run(sCommandLine, sWorkingDir);
 		if (eResult == execute::EResult::eError)

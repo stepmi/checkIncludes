@@ -60,7 +60,7 @@ namespace projectFile
 #endif
 		}
 
-		return false;
+		return true;
 	}
 
 }
