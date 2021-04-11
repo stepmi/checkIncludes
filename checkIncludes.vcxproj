@@ -183,6 +183,7 @@
     <ClCompile Include="src\projectFile\getCompileFiles.cpp" />
     <ClCompile Include="src\projectFile\setConfiguration.cpp" />
     <ClCompile Include="src\projectFile\threadpoolImpl.cpp" />
+    <ClCompile Include="src\system\execute.cpp" />
     <ClCompile Include="src\system\exit.cpp" />
     <ClCompile Include="src\system\logger.cpp" />
     <ClCompile Include="src\tools\filename.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="src\inc\projectFile\IProject.h" />
     <ClInclude Include="src\inc\projectFile\IThread.h" />
     <ClInclude Include="src\inc\projectFile\projectFile.h" />
+    <ClInclude Include="src\inc\system\execute.h" />
     <ClInclude Include="src\inc\system\exit.h" />
     <ClInclude Include="src\inc\system\logger.h" />
     <ClInclude Include="src\inc\tools\filename.h" />

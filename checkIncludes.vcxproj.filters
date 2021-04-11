@@ -151,6 +151,9 @@
     <ClCompile Include="src\compileFile\preProcess.cpp">
       <Filter>Source Files\compileFile</Filter>
     </ClCompile>
+    <ClCompile Include="src\system\execute.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\parser\state.h">
@@ -281,6 +284,9 @@
     </ClInclude>
     <ClInclude Include="src\compileFile\preProcess.h">
       <Filter>Source Files\compileFile</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\system\execute.h">
+      <Filter>Source Files\inc\system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

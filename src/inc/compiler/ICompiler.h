@@ -32,7 +32,7 @@ namespace compiler
 	{ 
 		eOk, 
 		eFailed,	// compile finished with some error
-		eError		// compile couldn't even be startet
+		eError		// compile couldn't even be started
 	};
 
 	ci_interface ICompiler
