@@ -87,11 +87,26 @@ endif()
 #add source dir to include path
 target_include_directories(checkIncludes PUBLIC "${PROJECT_SOURCE_DIR}/inc")
 
-# add threads lib for non-windows systems
-if(NOT WIN32)
+# warnings
+if(MSVC)
+	target_compile_options(checkIncludes PRIVATE /W4)
+else()
+	target_compile_options(checkIncludes PRIVATE -Wall -Wextra -pedantic)
+endif()
+
+# add threads lib for non msvc build systems
+if(NOT MSVC)
 	set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 	set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 	find_package(Threads REQUIRED)
 	target_link_libraries(checkIncludes Threads::Threads)
+endif()
+
+# gcc8 creates segfault with filesystem::path without this library
+# says it should be fixed with gcc9
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")	
+	if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)		
+		target_link_libraries(checkIncludes stdc++fs)
+	endif()
 endif()
 
