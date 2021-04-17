@@ -22,7 +22,7 @@ namespace execute
 		DWORD error = GetLastError();
 		if (error)
 		{
-			LPVOID lpMsgBuf;
+			LPVOID lpMsgBuf = nullptr;
 			DWORD bufLen = FormatMessageA(
 				FORMAT_MESSAGE_ALLOCATE_BUFFER |
 				FORMAT_MESSAGE_FROM_SYSTEM |
