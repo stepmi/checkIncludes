@@ -12,17 +12,17 @@ namespace parser
 	size_t CState::getLine() const { return m_iLine; }
 	bool CState::getIsFinished() const { return m_iPos >= m_iSize; }
 
-	const bool CState::getIsInAnyComment() const
+	bool CState::getIsInAnyComment() const
 	{
 		return m_bInSingleLineComment || m_bInMultiLineComment;
 	}
-	//const bool CState::getIsInSingleLineComment() const { return m_bInSingleLineComment; }
-	const bool CState::getIsInMultiLineComment() const { return m_bInMultiLineComment; }
-	const bool CState::getIsInInclude() const { return m_bInInclude; }
-	const bool CState::getIsInPreProcess() const { return  m_iPosPreProcess != std::string::npos;; }
-	const bool CState::getIsInFileQuote() const { return m_iPosFileQuote != std::string::npos; }
-	const bool CState::getIsInSystemFileQuote() const { return m_iPosSystemFileQuote != std::string::npos; }
-	const bool CState::getIsInAnyQuote() const 
+	//bool CState::getIsInSingleLineComment() const { return m_bInSingleLineComment; }
+	bool CState::getIsInMultiLineComment() const { return m_bInMultiLineComment; }
+	bool CState::getIsInInclude() const { return m_bInInclude; }
+	bool CState::getIsInPreProcess() const { return  m_iPosPreProcess != std::string::npos;; }
+	bool CState::getIsInFileQuote() const { return m_iPosFileQuote != std::string::npos; }
+	bool CState::getIsInSystemFileQuote() const { return m_iPosSystemFileQuote != std::string::npos; }
+	bool CState::getIsInAnyQuote() const 
 	{ 
 		return m_iPosFileQuote != std::string::npos || m_iPosSystemFileQuote != std::string::npos;
 	}

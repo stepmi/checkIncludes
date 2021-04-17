@@ -18,13 +18,13 @@ namespace parser
 		bool getIsFinished() const;
 
 		// where are we?
-		const bool getIsInAnyComment() const; // '/*' or '//' found
-		const bool getIsInMultiLineComment() const;	 // '/*' found
-		const bool getIsInInclude() const; // 'include' found
-		const bool getIsInPreProcess() const; // # found
-		const bool getIsInAnyQuote() const; // " or < found
-		const bool getIsInFileQuote() const;  // " found
-		const bool getIsInSystemFileQuote() const; // < found
+		bool getIsInAnyComment() const; // '/*' or '//' found
+		bool getIsInMultiLineComment() const;	 // '/*' found
+		bool getIsInInclude() const; // 'include' found
+		bool getIsInPreProcess() const; // # found
+		bool getIsInAnyQuote() const; // " or < found
+		bool getIsInFileQuote() const;  // " found
+		bool getIsInSystemFileQuote() const; // < found
 		size_t getPosPreProcess() const;	
 		size_t getPosFileQuote() const; 
 		size_t getPosSystemFileQuote() const;
