@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>   
+#include <string>
 #include <vector>
 #include "tools/platforms.h"
 
@@ -30,10 +30,9 @@ namespace compileFile
 		void setToIgnore();
 		void setIsEnabled(const bool a_bValue);
 	private:
+        HANDLE_INCLUDE m_iHandle = std::string::npos;
 		std::string m_sFile;
-
-		HANDLE_INCLUDE m_iHandle = std::string::npos;
-		size_t m_iPosStart = std::string::npos,			
+		size_t m_iPosStart = std::string::npos,
 			m_iLine = std::string::npos;
 
 		bool m_bIsSystemFile = false; // #include<>
@@ -43,5 +42,5 @@ namespace compileFile
 
 	using INCLUDES = std::vector<CInclude>;
 	using INCLUDE_HANDLES = std::vector<HANDLE_INCLUDE>;
-	
+
 }

@@ -12,10 +12,10 @@ namespace compileFile
 	{
 		std::lock_guard<std::mutex> guard(mutex_includesToIgnore);
 		for (auto &include : a_includes)
-		{			
+		{
 			if (!include.getIgnore())
 			{
-				bool bIgnore = false;
+				//bool bIgnore = false;
 				{
 					auto itIncludeToIgnore = std::find(a_includesToIgnore.begin(), a_includesToIgnore.end(), include);
 					if (itIncludeToIgnore != a_includesToIgnore.end())
@@ -35,7 +35,7 @@ namespace compileFile
 
 		// very likely a file which is named the same as the compile file should never be removed.
 		for (auto &include : a_includes)
-		{	
+		{
 			if (!include.getIgnore())
 			{
 				const platform::string sIncludeFileNamePure = STRING_TO_PLATFORM(include.getFile()).stem();
@@ -63,7 +63,7 @@ namespace compileFile
 				}
 			}
 		}
-	}	
+	}
 
 
 }

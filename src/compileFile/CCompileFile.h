@@ -16,10 +16,10 @@ namespace compileFile
 		~CCompileFile();
 
 		const std::string &getFileWorkingCopy() const override { return m_sCompileFileWorkingCopy; }
-		const std::string &getFile() const override { return m_sCompileFile; } // the original filename		
-		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }		
-		
-		INCLUDE_HANDLES getIncludesToCheck() const override;		
+		const std::string &getFile() const override { return m_sCompileFile; } // the original filename
+		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }
+
+		INCLUDE_HANDLES getIncludesToCheck() const override;
 		INCLUDE_HANDLES getIncludes() const override;
 		const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const override;
 		bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) override;
@@ -28,8 +28,8 @@ namespace compileFile
 
 		// preprocess
 		bool addMarkersForPreProcess() override;
-		bool removeMarkersForPreProcess() override;		
-		
+		bool removeMarkersForPreProcess() override;
+
 	private:
 
 		platform::string getFilePath() const;
@@ -39,17 +39,18 @@ namespace compileFile
 		bool switchIncludeInSrcAndFile(CInclude &a_include, const bool a_bSwitchOn);
 		bool switchMarkersForPreProcess(const bool a_bSwitchOn);
 		void switchMarkerForPreProcessInSrc(const CInclude &a_include, const bool a_bSwitchOn);
-		
-	private:
-		platform::string m_wsProjectFile;
-		std::string m_sCompileFileWorkingCopy,
-			m_sCompileFile; // the original name
 
+	private:
+		std::string m_sCompileFile, // the original name
+            m_sCompileFileWorkingCopy;
+
+        platform::string m_wsProjectFile;
+
+        std::string m_sSrcCode;
 		INCLUDES m_includes; // this contains all includes. some are set to ignore.
-		std::string m_sSrcCode;
 
 		const std::string m_sDisableInclude = "// disabled by checkIncludes ";
-		const int m_iLenDisableInclude = 0;		
+		const int m_iLenDisableInclude = 0;
 	};
 
 	platform::string getCompileFilePath(const std::string &a_sCompileFile, const platform::string &a_wsProjectFile);
