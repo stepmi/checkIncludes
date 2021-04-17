@@ -3,10 +3,14 @@
 #include "system/logger.h"
 #include "tools/filename.h"
 #include "tools/filesystem.h"
+#include <array>
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 #include "Shellapi.h"
+#else
+#include <cstdio>
+#include <iostream>
 #endif
 
 namespace execute
@@ -130,31 +134,6 @@ namespace execute
 		}
 	}
 
-#else
-	// TODO
-	class CTempFile
-	{
-	public:
-        std::string readFile() const
-		{
-			return std::string();
-		}
-
-	};
-
-	std::unique_ptr<CTempFile> createTempFile()
-	{
-		return std::unique_ptr<CTempFile>(nullptr);
-	}
-
-	EResult run(const std::string &, const platform::string &, const CTempFile *)
-	{
-		return EResult::eError;
-	}
-#endif
-
-
-
 	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, std::string &a_rsStdOut)
 	{
 		EResult eResult = EResult::eError;
@@ -180,6 +159,55 @@ namespace execute
 			sWorkingDir = std::filesystem::current_path();
 		return run(a_sCommandline, sWorkingDir, nullptr);
 	}
+
+#else
+
+	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, std::string &a_rsStdOut)
+	{
+		EResult eResult = EResult::eError;
+
+		const size_t iBufSize = 1000;
+		const size_t iReadSize = iBufSize - 1;
+		std::array<char, iBufSize> buffer;
+		std::unique_ptr<FILE, decltype(&pclose)> upPipe(popen(a_sCommandline.c_str(), "r"), pclose);
+		if (upPipe)
+		{
+			while(true)
+			{
+                const size_t iRead = fread(buffer.data(), 1, iReadSize, upPipe.get());
+				if (iRead != 0)
+				{
+					buffer[iRead] = 0;
+					a_rsStdOut += buffer.data();
+				}
+				if (iRead != iReadSize)
+					break;
+			}
+			// TODO
+			return EResult::eOk;
+		}
+
+		logger::add(logger::EType::eError, a_sCommandline + " failed.");
+		return EResult::eError;
+	}
+
+	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
+	{
+		std::unique_ptr<FILE, decltype(&pclose)> upPipe(popen(a_sCommandline.c_str(), "r"), pclose);
+		if (upPipe)
+		{
+			// TODO
+			return EResult::eOk;
+		}
+		logger::add(logger::EType::eError, a_sCommandline + " failed.");
+		return EResult::eError;
+	}
+#endif
+
+
+
+
+
 
 	std::string getCommandPath(const std::string &a_sCommand)
 	{

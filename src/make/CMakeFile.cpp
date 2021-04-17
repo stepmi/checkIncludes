@@ -19,7 +19,7 @@ namespace make
 #else
 		const std::string sMakePath = "make";
 #endif
-		
+
 		std::filesystem::path sWorkingDir;
 		{
 			std::filesystem::path sMakeFilePath(a_sMakeFile);
@@ -27,19 +27,23 @@ namespace make
 				sWorkingDir = sMakeFilePath.parent_path();
 		}
 
-		const std::filesystem::path sResultFile = sWorkingDir / "checkIncludes_make_result.txt";		
-		const std::string sCommandLine = sMakePath + " -n ";		
-		std::string sStdOut;
-		auto eResult = execute::runOutputToString(sCommandLine, sWorkingDir, sStdOut);
+		//options:
+		// -B to ignore timestamps aka force build
+		// -n to skip build, but only output the commands
+		const std::string sCommandLine = sMakePath + " -B -n ";
+		std::string sMakeResult;
+		auto eResult = execute::runOutputToString(sCommandLine, sWorkingDir, sMakeResult);
 		if (eResult == execute::EResult::eError)
 			logger::add(logger::EType::eError, "Error: Couldn't start " + tools::strings::getQuoted(sCommandLine));
 		else if (eResult == execute::EResult::eFailed)
 			logger::add(logger::EType::eError, "Error: " + tools::strings::getQuoted(sCommandLine) + " returned an error.");
 		else
 		{
-			const std::string sMakeResult = tools::filesystem::readFile(sResultFile);
+#ifndef _WIN32
+			//tools::filesystem::writeFile("./make_result_linux.txt", sMakeResult);
+#endif
 			if (sMakeResult.empty())
-				logger::add(logger::EType::eError, "Error: make result not found " + tools::strings::getQuoted(sResultFile.string()));
+				logger::add(logger::EType::eError, "Error: make result not found.");
 			else
 			{
 				return getMakeCommandLinesFromMakeResult(sMakeResult);
