@@ -27,11 +27,10 @@ namespace make
 				sWorkingDir = sMakeFilePath.parent_path();
 		}
 
-		const std::filesystem::path sResultFile = sWorkingDir / "checkIncludes_make_result.txt";
-		// TODO: this doesn't work. We have to find another method to redirect the output.
-		const std::string sCommandLine = sMakePath + " -n "; // > " + sResultFile.string();
-		
-		auto eResult = execute::run(sCommandLine, sWorkingDir);
+		const std::filesystem::path sResultFile = sWorkingDir / "checkIncludes_make_result.txt";		
+		const std::string sCommandLine = sMakePath + " -n ";		
+		std::string sStdOut;
+		auto eResult = execute::runOutputToString(sCommandLine, sWorkingDir, sStdOut);
 		if (eResult == execute::EResult::eError)
 			logger::add(logger::EType::eError, "Error: Couldn't start " + tools::strings::getQuoted(sCommandLine));
 		else if (eResult == execute::EResult::eFailed)

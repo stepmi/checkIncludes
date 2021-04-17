@@ -2,6 +2,11 @@
 #include <map>
 #include <mutex>
 #include "tools/strings.h"
+#include <filesystem>
+#include <chrono>
+#include <cstdlib>
+#include <random>
+#include <limits>
 
 namespace tools
 {
@@ -25,6 +30,24 @@ namespace tools
 
 			global_files.insert(std::make_pair(a_sFileName, sFilename));
 			return sFilename;
+		}
+
+		int getRandom()
+		{
+			std::mt19937 generator; // slow, but doesn't matter too much here
+			std::uniform_int_distribution<int> distribution(0, std::numeric_limits<int>::max());
+			return distribution(generator);			
+		}
+
+		platform::string getTempFileName()
+		{
+			using TIME_POINT = std::chrono::time_point<std::chrono::system_clock>;
+			const TIME_POINT tpNow = std::chrono::system_clock::now();
+			auto iDuration = std::chrono::duration_cast<std::chrono::seconds>(tpNow.time_since_epoch()).count();
+			const std::string sDuration = tools::strings::itos(iDuration);
+			
+			std::filesystem::path sFileName = "checkIncludes_" + sDuration + "_" + tools::strings::itos(getRandom()) + ".txt";
+			return std::filesystem::temp_directory_path() / sFileName;
 		}
 
 		bool isIncludeFile(const std::string &a_sFileName)

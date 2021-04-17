@@ -1,6 +1,8 @@
 #include "system/execute.h"
 #include <filesystem>
 #include "system/logger.h"
+#include "tools/filename.h"
+#include "tools/filesystem.h"
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #include <windows.h>
@@ -38,15 +40,60 @@ namespace execute
 		}
 		return std::string();
 	}
-#endif
 
-	EResult run(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
+	class CTempFile
 	{
-		platform::string sWorkingDir = a_sWorkingDir;
-		if (sWorkingDir.empty())
-			sWorkingDir = std::filesystem::current_path();
-#ifdef _WIN32		
-		// 2nd parameter of CreateProcess() is a non-const ptr.						
+	public:
+		CTempFile(const platform::string &a_sFileName, const ::HANDLE a_handle) :
+			m_sFileName(a_sFileName), m_handle(a_handle)
+		{}
+
+		~CTempFile()
+		{
+			CloseHandle(m_handle);	
+			tools::filesystem::removeAll(m_sFileName);
+		}
+
+		::HANDLE getHandle() const
+		{
+			return m_handle;
+		}
+
+		std::string readFile() const
+		{
+			return tools::filesystem::readFile(m_sFileName);
+		}
+
+	private:
+		::HANDLE m_handle;
+		platform::string m_sFileName;
+	};
+
+	std::unique_ptr<CTempFile> createTempFile()
+	{
+		SECURITY_ATTRIBUTES sa;
+		sa.nLength = sizeof(sa);
+		sa.lpSecurityDescriptor = nullptr;
+		sa.bInheritHandle = TRUE;
+
+		const auto sFileName = tools::filename::getTempFileName();
+		::HANDLE handle = CreateFileA(sFileName.string().c_str(),
+			FILE_APPEND_DATA,
+			FILE_SHARE_WRITE | FILE_SHARE_READ,
+			&sa,
+			OPEN_ALWAYS,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+
+		if (handle == INVALID_HANDLE_VALUE)
+			return std::unique_ptr<CTempFile>(nullptr);
+
+		return std::make_unique<CTempFile>(sFileName, handle);
+	}
+
+	EResult run(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, const CTempFile *a_pTempFile)
+	{
+		// 2nd parameter of CreateProcess() is a non-const ptr (only for wstring - so we could remove this)						
 		const auto iBufSize = a_sCommandline.size() + 1;
 		std::unique_ptr<char[]> upCommandLine = std::make_unique<char[]>(iBufSize);
 		strcpy_s(upCommandLine.get(), iBufSize, a_sCommandline.c_str());
@@ -56,15 +103,22 @@ namespace execute
 		ZeroMemory(&sinfo, sizeof(STARTUPINFO));
 		ZeroMemory(&pinfo, sizeof(PROCESS_INFORMATION));
 		sinfo.cb = sizeof(STARTUPINFOW);
+		if (a_pTempFile)
+		{
+			sinfo.dwFlags |= STARTF_USESTDHANDLES;
+			sinfo.hStdInput = INVALID_HANDLE_VALUE;
+			sinfo.hStdError = a_pTempFile->getHandle();
+			sinfo.hStdOutput = a_pTempFile->getHandle();
+		}
 
-		if (CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, false, 0, nullptr, sWorkingDir.string().c_str(), &sinfo, &pinfo))
+		if (CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, true, 0, nullptr, a_sWorkingDir.string().c_str(), &sinfo, &pinfo))
 		{
 			WaitForSingleObject(pinfo.hProcess, INFINITE);  // wait for process to end				
 			DWORD dwExitCode = 0;
 			::GetExitCodeProcess(pinfo.hProcess, &dwExitCode);
 			CloseHandle(pinfo.hProcess);
 			CloseHandle(pinfo.hThread);
-
+				
 			return dwExitCode == 0 ? EResult::eOk : EResult::eFailed;
 		}
 		else
@@ -72,9 +126,52 @@ namespace execute
 			const std::string sError = getLastError();
 			logger::add(logger::EType::eError, sError + " with:");
 			logger::add(logger::EType::eError, a_sCommandline);
-		}
-#endif
+			return EResult::eError;
+		}	
+	}
+	
+#else
+	// TODO
+	class CTempFile
+	{};
+
+	std::unique_ptr<CTempFile> createTempFile()
+	{
+		return std::unique_ptr<CTempFile>(nullptr);
+	}
+
+	EResult run(const std::string &, const platform::string &, const CTempFile *)
+	{
 		return EResult::eError;
+	}
+#endif
+
+
+
+	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, std::string &a_rsStdOut)
+	{
+		EResult eResult = EResult::eError;
+
+		platform::string sWorkingDir = a_sWorkingDir;
+		if (sWorkingDir.empty())
+			sWorkingDir = std::filesystem::current_path();
+
+		auto upTempFile = createTempFile();
+		if (upTempFile)
+		{
+			eResult = run(a_sCommandline, sWorkingDir, upTempFile.get());
+			a_rsStdOut = upTempFile->readFile();
+		}
+		return eResult;
+	}
+
+
+	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
+	{		
+		platform::string sWorkingDir = a_sWorkingDir;
+		if (sWorkingDir.empty())
+			sWorkingDir = std::filesystem::current_path();
+		return run(a_sCommandline, sWorkingDir, nullptr);
 	}
 	
 	std::string getCommandPath(const std::string &a_sCommand)

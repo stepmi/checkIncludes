@@ -32,7 +32,7 @@ namespace msvc
 			const std::string sCommandLine = getCommandLine(a_compileFile, a_eAction, a_parameters, a_options);
 			logger::add(logger::EType::eCommandLines, sCommandLine);
 
-			auto eResult = execute::run(sCommandLine, platform::string());
+			auto eResult = execute::runOutputToConsole(sCommandLine, platform::string());
 			if (eResult == execute::EResult::eOk)
 				return compiler::EResult::eOk;
 			else if (eResult == execute::EResult::eFailed)

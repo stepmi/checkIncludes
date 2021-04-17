@@ -13,7 +13,9 @@ namespace execute
 	};
 		
 	// use current working dir, if a_sWorkingDir is empty
-	EResult run(const std::string &a_sCommandline, const platform::string &a_sWorkingDir);
+
+	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, std::string &a_rsStdOut);	
+	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &a_sWorkingDir);
 
 	std::string getCommandPath(const std::string &a_sCommand);
 }
