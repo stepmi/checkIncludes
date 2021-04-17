@@ -19,19 +19,22 @@ int main(int argc, char* argv[])
 	const TIME_POINT tpStart = std::chrono::system_clock::now();
 
 	// read parameters
-	std::vector<platform::string> params;
+	std::vector<std::string> params;	
 	for (int i = 1; i < argc; i++)
-		params.push_back(argv[i]);
-	auto upParameter = parseCommandLine(params);
+	{
+		const platform::string sParam(argv[i]);        
+		params.push_back(PLATFORM_TOSTRING(sParam));		
+    }
+	 auto upParameter = parseCommandLine(params);
 	if (upParameter)
 	{
-		// all logging is be done in function code	
+		// all logging is be done in function code
 		exitHandler::initExitHandler();
 		projectFile::checkProject(*upParameter);
-		
+
 		const TIME_POINT tpEnd = std::chrono::system_clock::now();
 		auto sDuration = tools::strings::secondsToHours(std::chrono::duration_cast<std::chrono::seconds>(tpEnd - tpStart).count());
-		logger::add(logger::EType::eMessage, "Time taken: " + sDuration + " h");				
+		logger::add(logger::EType::eMessage, "Time taken: " + sDuration + " h");
 	}
 
 	return 0;
