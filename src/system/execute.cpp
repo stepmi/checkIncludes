@@ -50,7 +50,7 @@ namespace execute
 
 		~CTempFile()
 		{
-			CloseHandle(m_handle);	
+			CloseHandle(m_handle);
 			tools::filesystem::removeAll(m_sFileName);
 		}
 
@@ -93,7 +93,7 @@ namespace execute
 
 	EResult run(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, const CTempFile *a_pTempFile)
 	{
-		// 2nd parameter of CreateProcess() is a non-const ptr (only for wstring - so we could remove this)						
+		// 2nd parameter of CreateProcess() is a non-const ptr (only for wstring - so we could remove this)
 		const auto iBufSize = a_sCommandline.size() + 1;
 		std::unique_ptr<char[]> upCommandLine = std::make_unique<char[]>(iBufSize);
 		strcpy_s(upCommandLine.get(), iBufSize, a_sCommandline.c_str());
@@ -113,12 +113,12 @@ namespace execute
 
 		if (CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, true, 0, nullptr, a_sWorkingDir.string().c_str(), &sinfo, &pinfo))
 		{
-			WaitForSingleObject(pinfo.hProcess, INFINITE);  // wait for process to end				
+			WaitForSingleObject(pinfo.hProcess, INFINITE);  // wait for process to end
 			DWORD dwExitCode = 0;
 			::GetExitCodeProcess(pinfo.hProcess, &dwExitCode);
 			CloseHandle(pinfo.hProcess);
 			CloseHandle(pinfo.hThread);
-				
+
 			return dwExitCode == 0 ? EResult::eOk : EResult::eFailed;
 		}
 		else
@@ -127,13 +127,20 @@ namespace execute
 			logger::add(logger::EType::eError, sError + " with:");
 			logger::add(logger::EType::eError, a_sCommandline);
 			return EResult::eError;
-		}	
+		}
 	}
-	
+
 #else
 	// TODO
 	class CTempFile
-	{};
+	{
+	public:
+        std::string readFile() const
+		{
+			return std::string();
+		}
+
+	};
 
 	std::unique_ptr<CTempFile> createTempFile()
 	{
@@ -167,13 +174,13 @@ namespace execute
 
 
 	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
-	{		
+	{
 		platform::string sWorkingDir = a_sWorkingDir;
 		if (sWorkingDir.empty())
 			sWorkingDir = std::filesystem::current_path();
 		return run(a_sCommandline, sWorkingDir, nullptr);
 	}
-	
+
 	std::string getCommandPath(const std::string &a_sCommand)
 	{
 #ifdef _WIN32
@@ -190,7 +197,7 @@ namespace execute
 #else
 		return a_sCommand;
 #endif
-		
+
 
 	}
 }
