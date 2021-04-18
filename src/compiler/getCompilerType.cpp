@@ -7,6 +7,8 @@ namespace compiler
 {
 	ECompilerType getCompilerTypeFromCommandFileName(const std::string &a_sCommandFileName)
 	{
+		// TODO: Is it possible that make creates calls of gcc instead of g++?
+		// Then we could replace the command with g++ or run "gcc -lg++".
 		if (tools::strings::compareCaseInsensitive(a_sCommandFileName, "g++") ||
 			tools::strings::compareCaseInsensitive(a_sCommandFileName, "c++")) // see comment below - this is a symlink to c++ on Ubuntu
 			return ECompilerType::eGpp;

@@ -18,6 +18,6 @@ namespace compiler
 			return compiler::EResult::eError; // compile couldn't be started at all
 		}
 
-		std::string getCompileFileFromCommandLine(const compileFile::COMMANDLINE &) const override;		
+		std::string getCompileFileFromCommandLine(const compileFile::COMMANDLINE &a_commandline) const override;
 	};
 }

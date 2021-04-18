@@ -25,7 +25,7 @@ namespace make
 					{
 						const auto sCompileFile = upCompiler->getCompileFileFromCommandLine(commandLine);
 						if (!sCompileFile.empty())
-							result.push_back(compileFile::CCompileFileInfo(eCompilerType, "", commandLine));
+							result.push_back(compileFile::CCompileFileInfo(eCompilerType, sCompileFile, commandLine));
 						else
 							logger::add(logger::EType::eError, "Couldn't find compile file from command: " + execute::createCommandFromCommandLine(commandLine));
 					}
