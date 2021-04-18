@@ -4,5 +4,5 @@ enum class ECompilerType
 {
 	eUnknown,
 	eMsVc,
-	eGcc
+	eGpp // g++
 };

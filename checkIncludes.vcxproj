@@ -170,6 +170,7 @@
     <ClCompile Include="src\compileFile\preProcess.cpp" />
     <ClCompile Include="src\compileFile\readCompileFile.cpp" />
     <ClCompile Include="src\compiler\createCompiler.cpp" />
+    <ClCompile Include="src\compiler\getCompilerType.cpp" />
     <ClCompile Include="src\main\commandline.cpp" />
     <ClCompile Include="src\main\main.cpp" />
     <ClCompile Include="src\make\CMakeFile.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="src\inc\compileFile\ICompileFile.h" />
     <ClInclude Include="src\inc\compileFile\includeFileHandle.h" />
     <ClInclude Include="src\inc\compiler\createCompiler.h" />
+    <ClInclude Include="src\inc\compiler\getCompilerType.h" />
     <ClInclude Include="src\inc\compiler\ICompiler.h" />
     <ClInclude Include="src\inc\main\CParameters.h" />
     <ClInclude Include="src\inc\main\CProjectConfiguration.h" />

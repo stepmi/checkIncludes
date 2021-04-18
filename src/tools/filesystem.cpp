@@ -42,6 +42,21 @@ namespace tools
 			return std::filesystem::copy_file(a_wsSrc, a_wsDest, std::filesystem::copy_options::overwrite_existing, errorCode);
 		}
 
+		platform::string resolveSymLink(const platform::string &a_wsPath)
+		{
+			std::error_code errorCode;
+			platform::string sPath = a_wsPath;
+			while (std::filesystem::is_symlink(sPath, errorCode))
+			{
+				sPath = std::filesystem::read_symlink(sPath, errorCode);
+				if (errorCode)
+					return platform::string();
+				else if(sPath == a_wsPath)
+					return platform::string(); // this was a circular symlink
+			}
+			return sPath;
+		}
+
 	}
 
 }

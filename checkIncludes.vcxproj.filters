@@ -169,6 +169,9 @@
     <ClCompile Include="src\make\makeResultFilter.cpp">
       <Filter>Source Files\make</Filter>
     </ClCompile>
+    <ClCompile Include="src\compiler\getCompilerType.cpp">
+      <Filter>Source Files\compiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\parser\state.h">
@@ -317,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="src\make\makeResultFilter.h">
       <Filter>Source Files\make</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\compiler\getCompilerType.h">
+      <Filter>Source Files\inc\compiler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
