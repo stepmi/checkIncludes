@@ -5,12 +5,12 @@
 #include "tools/filesystem.h"
 #include <array>
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-#include "Shellapi.h"
+	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+	#include <windows.h>
+	#include <Shellapi.h>
 #else
-#include <cstdio>
-#include <iostream>
+	#include <cstdio>
+	#include <iostream>
 #endif
 
 namespace execute
