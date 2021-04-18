@@ -162,16 +162,16 @@ namespace compileFile
 
 
 
-	void checkCompileFile(projectFile::IThread &a_thread, const CParameters &a_parameters, const std::string a_sCompileFile, INCLUDES_TO_IGNORE &a_includesToIgnore)
+	void checkCompileFile(projectFile::IThread &a_thread, const CParameters &a_parameters, const compileFile::CCompileFileInfo a_compileFileInfo, INCLUDES_TO_IGNORE &a_includesToIgnore)
 	{
-		auto upCompiler = compiler::createCompiler(ECompilerType::eMsVc); // TODO, we have to store a compiler type for each compile file
+		auto upCompiler = compiler::createCompiler(a_compileFileInfo.getCompilerType());
 		if (upCompiler)
 		{
-			logger::add(logger::EType::eProcessedFiles, "Processing file " + tools::strings::getQuoted(a_sCompileFile));
-			auto upProject = cloneProject(a_parameters, a_sCompileFile);
+			logger::add(logger::EType::eProcessedFiles, "Processing file " + tools::strings::getQuoted(a_compileFileInfo.getCompileFile()));
+			auto upProject = cloneProject(a_parameters, a_compileFileInfo.getCompileFile());
 			if (upProject)
 			{
-				auto upCompileFile = readCompileFile(a_sCompileFile, upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy());
+				auto upCompileFile = readCompileFile(a_compileFileInfo.getCompileFile(), upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy());
 				if (upCompileFile)
 				{
 					if (!upCompileFile->getIncludes().empty())
@@ -196,12 +196,12 @@ namespace compileFile
 				}
 				else
 				{
-					logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_sCompileFile) + ". Couldn't read file");
+					logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_compileFileInfo.getCompileFile()) + ". Couldn't read file");
 				}
 			}
 			else
 			{
-				logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_sCompileFile) + ". Couldn't clone project file.");
+				logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_compileFileInfo.getCompileFile()) + ". Couldn't clone project file.");
 			}
 			a_thread.setIsFinished();
 		}

@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 #include "main/CParameters.h"
+#include "compileFile/CCompileFileInfo.h"
 
 namespace projectFile
 {
-	std::vector<std::string> getCompileFiles(const CParameters &a_parameters, std::vector<std::string> &a_rRemovedCompileFiles);
+	compileFile::COMPILE_FILES getCompileFiles(const CParameters &a_parameters, std::vector<std::string> &a_rRemovedCompileFiles);
 }

@@ -46,7 +46,7 @@ namespace threads
 		std::condition_variable &getConditionVariable();
 		
 		void waitForOne();
-		void addJob(const CParameters &a_parameters, const std::string a_sCompileFile, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore) override;
+		void addJob(const CParameters &a_parameters, const compileFile::CCompileFileInfo a_CompileFileInfo, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore) override;
 		void waitForAll() override;
 		
 	private:

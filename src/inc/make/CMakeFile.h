@@ -2,11 +2,9 @@
 
 #include <vector>
 #include <string>
+#include "compileFile/CCompileFileInfo.h"
 
 namespace make
-{
-	using COMMANDLINE = std::vector<std::string>;
-	using COMMANDLINES = std::vector<COMMANDLINE>;
-
-	COMMANDLINES getMakeCommandLines(const std::string &a_sMakeFile);
+{		
+	compileFile::COMPILE_FILES getCompileFiles(const std::string &a_sMakeFile);
 }

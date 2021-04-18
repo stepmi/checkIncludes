@@ -90,9 +90,9 @@ namespace threads
 	}
 
 
-	void CThreadPool::addJob(const CParameters &a_parameters, const std::string a_sCompileFile, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore)
+	void CThreadPool::addJob(const CParameters &a_parameters, const compileFile::CCompileFileInfo a_CompileFileInfo, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore)
 	{
-		logger::add(logger::EType::eDebugThreads, "CThreadPool addJob " + a_sCompileFile);
+		logger::add(logger::EType::eDebugThreads, "CThreadPool addJob " + a_CompileFileInfo.getCompileFile());
 
 		waitForOne();
 
@@ -110,7 +110,7 @@ namespace threads
 		}
 		if (pThread)
 		{
-			std::thread threadLoc(&compileFile::checkCompileFile, std::ref(*pThread), std::ref(a_parameters), a_sCompileFile, std::ref(a_includesToIgnore));
+			std::thread threadLoc(&compileFile::checkCompileFile, std::ref(*pThread), std::ref(a_parameters), a_CompileFileInfo, std::ref(a_includesToIgnore));
 			pThread->setJob(std::move(threadLoc));
 		}
 

@@ -26,7 +26,7 @@ namespace make
 		const std::string &getText() const { return m_sText; }		
 		char getChar() const { return m_sText[m_iPos]; }
 		bool getIsFinished() const { return m_iPos >= m_iSize; }
-		const COMMANDLINE &getArguments() const { return m_arguments; }				
+		const compileFile::COMMANDLINE &getArguments() const { return m_arguments; }				
 		bool getIsInQuote() const { return m_cQuote != 0; }
 
 		// manipulators
@@ -48,7 +48,7 @@ namespace make
 		std::string m_sArgument;
 		char m_cQuote = 0; // to indicate in what kind of quote we are now		
 
-		COMMANDLINE m_arguments; // result
+		compileFile::COMMANDLINE m_arguments; // result
 	};
 	
 	void handleChar(CState &a_rState)
@@ -83,7 +83,7 @@ namespace make
 	// this should be equivalent to CommandLineToArgvW.
 	// split a single command line into arguments, considering white space, tab, quotation.
 	// but we don't have to handle all possibilities.
-	COMMANDLINE splitCommandLine(const std::string &a_sLine)
+	compileFile::COMMANDLINE splitCommandLine(const std::string &a_sLine)
 	{
 		CState state(a_sLine);
 		while (!state.getIsFinished())
@@ -94,7 +94,7 @@ namespace make
 #ifdef _WIN32
 	#ifdef _TEST_COMMAND_LINE
 		{
-			COMMANDLINE commandLineWin;
+			compileFile::COMMANDLINE commandLineWin;
 			if (!a_sLine.empty()) 
 			{
 				auto wsLine = tools::strings::atow(a_sLine);

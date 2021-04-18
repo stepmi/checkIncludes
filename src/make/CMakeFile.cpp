@@ -5,10 +5,11 @@
 #include <filesystem>
 #include "tools//filesystem.h"
 #include "makeResultParser.h"
+#include "makeResultFilter.h"
 
 namespace make
 {	
-	COMMANDLINES getMakeCommandLines(const std::string &a_sMakeFile)
+	std::string executeMake(const std::string &a_sMakeFile)
 	{
 #ifdef _WIN32
 		const std::string sMakePath = execute::getCommandPath("make.exe");
@@ -33,20 +34,25 @@ namespace make
 			logger::add(logger::EType::eError, "Error: Couldn't start " + tools::strings::getQuoted(sCommandLine));
 		else if (eResult == execute::EResult::eFailed)
 			logger::add(logger::EType::eError, "Error: " + tools::strings::getQuoted(sCommandLine) + " returned an error.");
-		else
-		{
+		
+		return sMakeResult;
+	}
+
+	compileFile::COMPILE_FILES getCompileFiles(const std::string &a_sMakeFile)
+	{
+		const std::string sMakeResult = executeMake(a_sMakeFile);
 #ifndef _WIN32
 			//tools::filesystem::writeFile("./make_result_linux.txt", sMakeResult);
 #else
 			//sMakeResult = tools::filesystem::readFile("d:\\make_result_linux.txt");
 #endif
-			if (sMakeResult.empty())
-				logger::add(logger::EType::eError, "Error: make result not found.");
-			else
-			{
-				return getCommandLinesFromMakeResult(sMakeResult);
-			}
+		if (!sMakeResult.empty())
+		{
+			auto commandlines = getCommandLinesFromMakeResult(sMakeResult);
+			return filterCommandLines(commandlines);
 		}
+		else		
+			logger::add(logger::EType::eError, "Error: make result not found.");
 
 		return {};
 

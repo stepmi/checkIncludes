@@ -173,6 +173,7 @@
     <ClCompile Include="src\main\commandline.cpp" />
     <ClCompile Include="src\main\main.cpp" />
     <ClCompile Include="src\make\CMakeFile.cpp" />
+    <ClCompile Include="src\make\makeResultFilter.cpp" />
     <ClCompile Include="src\make\makeResultParser.cpp" />
     <ClCompile Include="src\msvc\CMsCompiler.cpp" />
     <ClCompile Include="src\msvc\CMsProject.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="src\compileFile\filterIncludes.h" />
     <ClInclude Include="src\compileFile\preProcess.h" />
     <ClInclude Include="src\compileFile\readCompileFile.h" />
+    <ClInclude Include="src\inc\compileFile\CCompileFileInfo.h" />
     <ClInclude Include="src\inc\compileFile\CFilePos.h" />
     <ClInclude Include="src\inc\compileFile\CIncludeFile.h" />
     <ClInclude Include="src\inc\compileFile\CIncludeFileIgnore.h" />
@@ -234,6 +236,7 @@
     <ClInclude Include="src\inc\xml\tinyxml2.h" />
     <ClInclude Include="src\inc\xml\xmlUtils.h" />
     <ClInclude Include="src\main\commandline.h" />
+    <ClInclude Include="src\make\makeResultFilter.h" />
     <ClInclude Include="src\make\makeResultParser.h" />
     <ClInclude Include="src\msvc\MsProjectDefs.h" />
     <ClInclude Include="src\parser\state.h" />

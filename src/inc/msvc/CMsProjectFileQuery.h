@@ -4,6 +4,7 @@
 #include <memory>
 #include "xml/tinyxml2.h"
 #include "main/CProjectConfiguration.h"
+#include "compileFile/CCompileFileInfo.h"
 
 
 namespace msvc
@@ -12,7 +13,7 @@ namespace msvc
 	{
 	public:
 		bool load(const platform::string &a_wsFile);
-		std::vector<std::string> getCompileFiles() const;
+		compileFile::COMPILE_FILES getCompileFiles() const;
 		std::vector<CProjectConfiguration> getProjectConfigurations() const;
 		
 	private:

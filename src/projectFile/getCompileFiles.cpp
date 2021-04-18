@@ -10,11 +10,11 @@
 namespace projectFile
 {
 
-	bool findFileNameProvidedByUserInCompileFiles(const std::vector<std::string> &a_compileFiles, const std::string &a_sFileProvidedByUser)
+	bool findFileNameProvidedByUserInCompileFiles(const compileFile::COMPILE_FILES &a_compileFiles, const std::string &a_sFileProvidedByUser)
 	{
-		for (const auto &sCompileFile : a_compileFiles)
+		for (const auto &compileFile : a_compileFiles)
 		{
-			if (tools::strings::compareUserFileName(sCompileFile, a_sFileProvidedByUser))
+			if (tools::strings::compareUserFileName(compileFile.getCompileFile(), a_sFileProvidedByUser))
 				return true;
 		}
 		return false;
@@ -31,14 +31,14 @@ namespace projectFile
 	}
 
 	// returns the removed files
-	void removeCompileFilesToIgnore(std::vector<std::string> &a_rCompileFiles, const std::vector<std::string> &a_filesToIgnore, std::vector<std::string> &a_rRemovedCompileFiles)
+	void removeCompileFilesToIgnore(compileFile::COMPILE_FILES &a_rCompileFiles, const std::vector<std::string> &a_filesToIgnore, std::vector<std::string> &a_rRemovedCompileFiles)
 	{		
 		for (auto it = a_rCompileFiles.begin(); it != a_rCompileFiles.end(); )
 		{
-			auto &sCompileFile = *it;
+			const auto &sCompileFile = it->getCompileFile();
 			if (findCompileFileInFilesProvidedByUser(a_filesToIgnore, sCompileFile))
 			{
-				a_rRemovedCompileFiles.push_back(*it);
+				a_rRemovedCompileFiles.push_back(sCompileFile);
 				it = a_rCompileFiles.erase(it);
 			}
 			else
@@ -46,24 +46,24 @@ namespace projectFile
 		}	
 	}
 
-	void restrictCompileFiles(std::vector<std::string> &a_rCompileFiles, const std::vector<std::string> &a_filesToRestrictTo, std::vector<std::string> &a_rRemovedCompileFiles)
+	void restrictCompileFiles(compileFile::COMPILE_FILES &a_rCompileFiles, const std::vector<std::string> &a_filesToRestrictTo, std::vector<std::string> &a_rRemovedCompileFiles)
 	{
 		for (auto it = a_rCompileFiles.begin(); it != a_rCompileFiles.end(); )
 		{
-			auto &sCompileFile = *it;
+			const auto &sCompileFile = it->getCompileFile();
 			if (findCompileFileInFilesProvidedByUser(a_filesToRestrictTo, sCompileFile))
 				it++;
 			else
 			{
-				a_rRemovedCompileFiles.push_back(*it);
+				a_rRemovedCompileFiles.push_back(sCompileFile);
 				it = a_rCompileFiles.erase(it);
 			}
 		}
 	}
 
-	std::vector<std::string> getCompileFiles(const CParameters &a_parameters, std::vector<std::string> &a_rRemovedCompileFiles)
+	compileFile::COMPILE_FILES getCompileFiles(const CParameters &a_parameters, std::vector<std::string> &a_rRemovedCompileFiles)
 	{
-		std::vector<std::string> compileFiles;
+		compileFile::COMPILE_FILES compileFiles;
 		if (a_parameters.getProjectType() == EProjectType::eMsBuild)
 		{
 #ifdef  _WIN32
@@ -79,9 +79,7 @@ namespace projectFile
 		}
 		else if (a_parameters.getProjectType() == EProjectType::eMakeFile)
 		{
-			// TODO: we need a list of compile files with more information for each file
-			// this is just testing code
-			const auto commandlines = make::getMakeCommandLines(a_parameters.getProject().string());
+			const auto commandlines = make::getCompileFiles(a_parameters.getProject().string());
 		}
 
 

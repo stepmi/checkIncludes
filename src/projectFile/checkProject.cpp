@@ -60,16 +60,23 @@ namespace projectFile
 		}
 	}
 
+	void printCompileFiles(const std::string &a_sName, const compileFile::COMPILE_FILES &a_compileFiles)
+	{
+		std::vector<std::string> files;
+		for (auto &compileFile : a_compileFiles)
+			files.push_back(compileFile.getCompileFile());
+		printFiles(a_sName, files);
+	}
 
 
-	void printExtendedInfo(const CParameters &a_parameters, const std::vector<std::string> &a_compileFiles, const std::vector<std::string> &a_removedCompileFiles)
+	void printExtendedInfo(const CParameters &a_parameters, const compileFile::COMPILE_FILES &a_compileFiles, const std::vector<std::string> &a_removedCompileFiles)
 	{		
 		if (!a_parameters.getCompileFiles().empty() || !a_parameters.getIgnoreCompileFiles().empty())
 		{
 			// the user provided options to restrict the compile files
 			// so we we want to present the results of the restriction
 			if (a_compileFiles.size() < a_removedCompileFiles.size())
-				printFiles("files to compile:", a_compileFiles);
+				printCompileFiles("files to compile:", a_compileFiles);
 			else
 				printFiles("compile files to ignore:", a_removedCompileFiles);
 		}		
@@ -84,7 +91,7 @@ namespace projectFile
 		if (setConfiguration(parameters))
 		{			
 			std::vector<std::string> removedCompileFiles;
-			std::vector<std::string> compileFiles = getCompileFiles(parameters, removedCompileFiles);
+			auto compileFiles = getCompileFiles(parameters, removedCompileFiles);
 			if (!compileFiles.empty())
 			{				
 				compileFile::INCLUDES_TO_IGNORE includesToIgnore;				

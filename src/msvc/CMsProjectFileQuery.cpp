@@ -6,9 +6,9 @@
 namespace msvc
 {
 
-	std::vector<std::string> CMsProjectFileQuery::getCompileFiles() const
+	compileFile::COMPILE_FILES CMsProjectFileQuery::getCompileFiles() const
 	{
-		std::vector<std::string> result;
+		compileFile::COMPILE_FILES result;
 		for (const auto *pElementItemGroup : xmlUtils::getChildElementsByName(*m_pElementProject, sTagItemGroup))
 		{
 			for (auto *pElementClCompile : xmlUtils::getChildElementsByName(*pElementItemGroup, sTagClCompile))
@@ -17,7 +17,7 @@ namespace msvc
 				{
 					const std::string sCompileFile = xmlUtils::getAttributeText(*pElementClCompile, sAttInclude);
 					if (!sCompileFile.empty())
-						result.push_back(sCompileFile);
+						result.push_back(compileFile::CCompileFileInfo(ECompilerType::eMsVc, sCompileFile, {}));
 				}
 			}
 		}

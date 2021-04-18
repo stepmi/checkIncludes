@@ -4,6 +4,7 @@
 #include "main/CParameters.h"
 #include <memory>
 #include "tools/interface.h"
+#include "compileFile/CCompileFileInfo.h"
 
 namespace threads
 {	
@@ -12,7 +13,7 @@ namespace threads
 	{
 		virtual ~IThreadPool() = default;
 		
-		virtual void addJob(const CParameters &a_parameters, const std::string a_sCompileFile, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore) = 0;
+		virtual void addJob(const CParameters &a_parameters, const compileFile::CCompileFileInfo a_CompileFileInfo, compileFile::INCLUDES_TO_IGNORE &a_includesToIgnore) = 0;
 		virtual void waitForAll() = 0;
 	};
 
