@@ -6,6 +6,7 @@
 #include "main/CParameters.h"
 #include "compileFile/ICompileFile.h"
 #include "system/execute.h"
+#include <assert.h>
 
 namespace msvc
 {
@@ -39,6 +40,12 @@ namespace msvc
 				return compiler::EResult::eFailed; // compile failed
 			
 			return compiler::EResult::eError; // compile couldn't be started at all
+		}
+
+		std::string getCompileFileFromCommandLine(const compileFile::COMMANDLINE &) const override
+		{
+			assert(0); // doesn't make sense for this compiler
+			return std::string();
 		}
 	private:
 		std::string getTargetText(const compiler::EAction a_eAction) const

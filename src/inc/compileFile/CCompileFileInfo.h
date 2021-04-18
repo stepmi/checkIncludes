@@ -6,7 +6,7 @@
 
 namespace compileFile
 {
-	using COMMANDLINE = std::vector<std::string>;
+	using COMMANDLINE = std::vector<std::string>; // this always a command and its arguments
 
 	// a file from the project, that can be compiled. Most likely a .cpp or .c file.
 	// this contains all the info, that's needed to start the check of a compile file

@@ -172,6 +172,9 @@
     <ClCompile Include="src\compiler\getCompilerType.cpp">
       <Filter>Source Files\compiler</Filter>
     </ClCompile>
+    <ClCompile Include="src\compiler\CGppCompiler.cpp">
+      <Filter>Source Files\compiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\parser\state.h">
@@ -323,6 +326,9 @@
     </ClInclude>
     <ClInclude Include="src\inc\compiler\getCompilerType.h">
       <Filter>Source Files\inc\compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler\CGppCompiler.h">
+      <Filter>Source Files\compiler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -205,10 +205,6 @@ namespace execute
 #endif
 
 
-
-
-
-
 	std::string getCommandPath(const std::string &a_sCommand)
 	{
 #ifdef _WIN32
@@ -225,7 +221,19 @@ namespace execute
 #else
 		return a_sCommand;
 #endif
-
-
 	}
+
+	std::string createCommandFromCommandLine(const compileFile::COMMANDLINE &a_commandLine)
+	{
+		// TODO: quotes may be removed - maybe we have to search for space or tabs in arguments and add quotes
+		std::string result;
+		for (const auto &sArgument : a_commandLine)
+		{
+			result += sArgument;
+			if (&sArgument != &a_commandLine.back())
+				result += " ";
+		}
+		return result;
+	}
+
 }

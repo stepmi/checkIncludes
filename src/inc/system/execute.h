@@ -2,6 +2,7 @@
 
 #include <string>
 #include "tools/platforms.h"
+#include "compileFile/CCompileFileInfo.h"
 
 namespace execute
 {
@@ -18,4 +19,6 @@ namespace execute
 	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &a_sWorkingDir);
 
 	std::string getCommandPath(const std::string &a_sCommand);
+
+	std::string createCommandFromCommandLine(const compileFile::COMMANDLINE &a_commandLine);
 }
