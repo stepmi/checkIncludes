@@ -173,6 +173,7 @@
     <ClCompile Include="src\main\commandline.cpp" />
     <ClCompile Include="src\main\main.cpp" />
     <ClCompile Include="src\make\CMakeFile.cpp" />
+    <ClCompile Include="src\make\makeResultParser.cpp" />
     <ClCompile Include="src\msvc\CMsCompiler.cpp" />
     <ClCompile Include="src\msvc\CMsProject.cpp" />
     <ClCompile Include="src\msvc\CMsProjectFile.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="src\inc\xml\tinyxml2.h" />
     <ClInclude Include="src\inc\xml\xmlUtils.h" />
     <ClInclude Include="src\main\commandline.h" />
+    <ClInclude Include="src\make\makeResultParser.h" />
     <ClInclude Include="src\msvc\MsProjectDefs.h" />
     <ClInclude Include="src\parser\state.h" />
     <ClInclude Include="src\parser\tokens.h" />
@@ -246,6 +248,7 @@
     <Text Include="src\compileFile\CMakeLists.txt" />
     <Text Include="src\compiler\CMakeLists.txt" />
     <Text Include="src\main\CMakeLists.txt" />
+    <Text Include="src\make\CMakeLists.txt" />
     <Text Include="src\msvc\CMakeLists.txt" />
     <Text Include="src\parser\CMakeLists.txt" />
     <Text Include="src\projectFile\CMakeLists.txt" />

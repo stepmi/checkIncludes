@@ -5,5 +5,8 @@
 
 namespace make
 {
-	std::vector<std::string> getMakeCommandLines(const std::string &a_sMakeFile);
+	using COMMANDLINE = std::vector<std::string>;
+	using COMMANDLINES = std::vector<COMMANDLINE>;
+
+	COMMANDLINES getMakeCommandLines(const std::string &a_sMakeFile);
 }

@@ -4,15 +4,11 @@
 #include "tools/strings.h"
 #include <filesystem>
 #include "tools//filesystem.h"
+#include "makeResultParser.h"
 
 namespace make
-{
-	std::vector<std::string> getMakeCommandLinesFromMakeResult(const std::string &a_sMakeResult)
-	{
-		return {};
-	}
-
-	std::vector<std::string> getMakeCommandLines(const std::string &a_sMakeFile)
+{	
+	COMMANDLINES getMakeCommandLines(const std::string &a_sMakeFile)
 	{
 #ifdef _WIN32
 		const std::string sMakePath = execute::getCommandPath("make.exe");
@@ -41,12 +37,14 @@ namespace make
 		{
 #ifndef _WIN32
 			//tools::filesystem::writeFile("./make_result_linux.txt", sMakeResult);
+#else
+			//sMakeResult = tools::filesystem::readFile("d:\\make_result_linux.txt");
 #endif
 			if (sMakeResult.empty())
 				logger::add(logger::EType::eError, "Error: make result not found.");
 			else
 			{
-				return getMakeCommandLinesFromMakeResult(sMakeResult);
+				return getCommandLinesFromMakeResult(sMakeResult);
 			}
 		}
 

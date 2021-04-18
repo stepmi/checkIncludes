@@ -81,7 +81,7 @@ namespace projectFile
 		{
 			// TODO: we need a list of compile files with more information for each file
 			// this is just testing code
-			compileFiles = make::getMakeCommandLines(a_parameters.getProject().string());
+			const auto commandlines = make::getMakeCommandLines(a_parameters.getProject().string());
 		}
 
 

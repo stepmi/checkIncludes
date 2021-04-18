@@ -163,6 +163,9 @@
     <ClCompile Include="src\make\CMakeFile.cpp">
       <Filter>Source Files\make</Filter>
     </ClCompile>
+    <ClCompile Include="src\make\makeResultParser.cpp">
+      <Filter>Source Files\make</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\parser\state.h">
@@ -303,6 +306,9 @@
     <ClInclude Include="src\inc\main\EProjectType.h">
       <Filter>Source Files\inc\main</Filter>
     </ClInclude>
+    <ClInclude Include="src\make\makeResultParser.h">
+      <Filter>Source Files\make</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\main\CMakeLists.txt">
@@ -333,5 +339,8 @@
       <Filter>Source Files\xml</Filter>
     </Text>
     <Text Include="src\CMakeLists.txt" />
+    <Text Include="src\make\CMakeLists.txt">
+      <Filter>Source Files\make</Filter>
+    </Text>
   </ItemGroup>
 </Project>
