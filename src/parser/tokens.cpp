@@ -18,7 +18,7 @@ namespace parser
 		if (isToken(a_state))
 		{
 			handleToken(a_state);
-			a_state.addToPos(m_sToken.size());
+			a_state.incPos(m_sToken.size());
 			return true;
 		}
 		return false;
@@ -37,9 +37,9 @@ namespace parser
 	const std::string sTokenSingleLineComment = "//";
 	const std::string sTokenMultiLineCommentStart = "/*";
 	const std::string sTokenMultiLineCommentEnd = "*/";
-	const std::string sTokenLineFeedWindows = "\r\n";  // linefeeds - we handle them all
-	const std::string sTokenLineFeedUnix = "\n";
-	const std::string sTokenLineFeedMac = "\r";
+	const std::string sTokenLineBreakWindows = "\r\n";  // linebreaks - we handle them all
+	const std::string sTokenLineBreakUnix = "\n";
+	const std::string sTokenLineBreakMac = "\r";
 	const std::string sTokenInclude = "include";
 	const std::string sTokenUniversal = " ";
 
@@ -215,10 +215,10 @@ namespace parser
 	};
 
 	// base class for all linefeeds
-	class CTokenLineFeed : public CToken
+	class CTokenLineBreak : public CToken
 	{
 	public:
-		explicit CTokenLineFeed(const std::string &a_sToken) : CToken(a_sToken)
+		explicit CTokenLineBreak(const std::string &a_sToken) : CToken(a_sToken)
 		{}
 	private:
 		void handleToken(CState &a_state) const override
@@ -233,20 +233,20 @@ namespace parser
 		}
 	};
 
-	class CTokenLineFeedWindows : public CTokenLineFeed
+	class CTokenLineBreakWindows : public CTokenLineBreak
 	{
 	public:
-		CTokenLineFeedWindows() : CTokenLineFeed(sTokenLineFeedWindows) {}	
+		CTokenLineBreakWindows() : CTokenLineBreak(sTokenLineBreakWindows) {}	
 	};
-	class CTokenLineFeedUnix : public CTokenLineFeed
+	class CTokenLineBreakUnix : public CTokenLineBreak
 	{
 	public:
-		CTokenLineFeedUnix() : CTokenLineFeed(sTokenLineFeedUnix) {}
+		CTokenLineBreakUnix() : CTokenLineBreak(sTokenLineBreakUnix) {}
 	};
-	class CTokenLineFeedMac : public CTokenLineFeed
+	class CTokenLineBreakMac : public CTokenLineBreak
 	{
 	public:
-		CTokenLineFeedMac() : CTokenLineFeed(sTokenLineFeedMac) {}
+		CTokenLineBreakMac() : CTokenLineBreak(sTokenLineBreakMac) {}
 	};
 	
 	// this is to be added as the last token.
@@ -272,9 +272,9 @@ namespace parser
 		tokens.push_back(std::make_unique<CTokenSingleLineComment>());
 		tokens.push_back(std::make_unique<CTokenMultiLineCommentStart>());
 		tokens.push_back(std::make_unique<CTokenMultiLineCommentEnd>());
-		tokens.push_back(std::make_unique<CTokenLineFeedWindows>()); // unix and mac contain the same characters, so windows must be the first
-		tokens.push_back(std::make_unique<CTokenLineFeedUnix>());
-		tokens.push_back(std::make_unique<CTokenLineFeedMac>());		
+		tokens.push_back(std::make_unique<CTokenLineBreakWindows>()); // unix and mac contain the same characters, so windows must be the first
+		tokens.push_back(std::make_unique<CTokenLineBreakUnix>());
+		tokens.push_back(std::make_unique<CTokenLineBreakMac>());		
 		tokens.push_back(std::make_unique<CTokenUniversal>());	// this must always be the last one
 
 		return tokens;

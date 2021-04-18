@@ -34,7 +34,7 @@ namespace parser
 	const compileFile::INCLUDES &CState::getIncludes() const { return m_includes; }
 
 	// manipulators
-	void CState::addToPos(const size_t a_iValue) 
+	void CState::incPos(const size_t a_iValue) 
 	{
 		m_iPos += a_iValue;
 	}

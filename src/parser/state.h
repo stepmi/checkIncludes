@@ -32,7 +32,7 @@ namespace parser
 		const compileFile::INCLUDES &getIncludes() const;
 		
 		// manipulators
-		void addToPos(const size_t a_iValue);
+		void incPos(const size_t a_iValue);
 		void setFileQuote(const size_t a_iPos);
 		void setSystemFileQuote(const size_t a_iPos);
 		void setSingleLineComment(const bool a_bValue);
