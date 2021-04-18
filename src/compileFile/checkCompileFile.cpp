@@ -168,6 +168,7 @@ namespace compileFile
 		if (upCompiler)
 		{
 			logger::add(logger::EType::eProcessedFiles, "Processing file " + tools::strings::getQuoted(a_compileFileInfo.getCompileFile()));
+			// this creates a real clone only for msbuild.
 			auto upProject = cloneProject(a_parameters, a_compileFileInfo.getCompileFile());
 			if (upProject)
 			{
@@ -201,7 +202,11 @@ namespace compileFile
 			}
 			else
 			{
-				logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_compileFileInfo.getCompileFile()) + ". Couldn't clone project file.");
+				if (a_parameters.getProjectType() == EProjectType::eMsBuild)
+				{
+					// the project file is only clones for msbuild. For all other project types, this error message makes no sense.
+					logger::add(logger::EType::eError, "Skipping file " + tools::strings::getQuoted(a_compileFileInfo.getCompileFile()) + ". Couldn't clone project file.");
+				}
 			}
 			a_thread.setIsFinished();
 		}

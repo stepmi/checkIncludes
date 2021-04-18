@@ -79,7 +79,7 @@ namespace projectFile
 		}
 		else if (a_parameters.getProjectType() == EProjectType::eMakeFile)
 		{
-			const auto commandlines = make::getCompileFiles(a_parameters.getProject().string());
+			compileFiles = make::getCompileFiles(a_parameters.getProject().string());
 		}
 
 

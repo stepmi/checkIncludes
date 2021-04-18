@@ -220,6 +220,7 @@
     <ClInclude Include="src\inc\main\EOption.h" />
     <ClInclude Include="src\inc\main\EProjectType.h" />
     <ClInclude Include="src\inc\make\CMakeFile.h" />
+    <ClInclude Include="src\inc\make\CMakeProject.h" />
     <ClInclude Include="src\inc\msvc\CMsCompiler.h" />
     <ClInclude Include="src\inc\msvc\CMsProject.h" />
     <ClInclude Include="src\inc\msvc\CMsProjectFile.h" />

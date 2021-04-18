@@ -330,6 +330,9 @@
     <ClInclude Include="src\compiler\CGppCompiler.h">
       <Filter>Source Files\compiler</Filter>
     </ClInclude>
+    <ClInclude Include="src\inc\make\CMakeProject.h">
+      <Filter>Source Files\inc\make</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\main\CMakeLists.txt">

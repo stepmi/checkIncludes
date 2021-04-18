@@ -6,10 +6,10 @@
 namespace msvc
 {
 
-	CMsProject::CMsProject(const CParameters &a_parameters, const platform::string &a_wsProjectFile, const std::string &s_sCompileFile, 
-		const std::string &s_sStdAfx, const platform::string &a_wsIntermediateDir) :
-		m_parameters(a_parameters), m_wsProjectFile(a_wsProjectFile), m_sCompileFile(s_sCompileFile), 
-		m_sStdAfx(s_sStdAfx), m_wsIntermediateDir(a_wsIntermediateDir)
+	CMsProject::CMsProject(const CParameters &a_parameters, const platform::string &a_wsProjectFile, const std::string &a_sCompileFile, 
+		const std::string &a_sStdAfx, const platform::string &a_wsIntermediateDir) :
+		m_parameters(a_parameters), m_wsProjectFile(a_wsProjectFile), m_sCompileFile(a_sCompileFile), 
+		m_sStdAfx(a_sStdAfx), m_wsIntermediateDir(a_wsIntermediateDir)
 	{
 		exitHandler::add(m_wsProjectFile);
 		exitHandler::add(m_wsIntermediateDir);
@@ -25,7 +25,7 @@ namespace msvc
 	}
 
 
-	const platform::string &CMsProject::getProjectFileWorkingCopy() const
+	platform::string CMsProject::getProjectFileWorkingCopy() const
 	{
 		return m_wsProjectFile;
 	}

@@ -40,11 +40,11 @@ namespace make
 
 	compileFile::COMPILE_FILES getCompileFiles(const std::string &a_sMakeFile)
 	{
-		const std::string sMakeResult = executeMake(a_sMakeFile);
+		std::string sMakeResult = executeMake(a_sMakeFile);
 #ifndef _WIN32
 			//tools::filesystem::writeFile("./make_result_linux.txt", sMakeResult);
 #else
-			//sMakeResult = tools::filesystem::readFile("d:\\make_result_linux.txt");
+			sMakeResult = tools::filesystem::readFile("d:\\make_result_linux.txt");
 #endif
 		if (!sMakeResult.empty())
 		{

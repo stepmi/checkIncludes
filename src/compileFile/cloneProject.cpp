@@ -7,6 +7,7 @@
 #include "system/exit.h"
 #include "tools/find.h"
 #include "CCompileFile.h"
+#include "make/CMakeProject.h"
 #ifdef  _WIN32
 	#include "msvc/CMsProjectFile.h"
 	#include "msvc/CMsProject.h"
@@ -90,6 +91,17 @@ namespace compileFile
 
 			return std::make_unique<msvc::CMsProject>(a_parameters, wsWorkingCopyProject, sWorkingCopyCompileFile, sStdAfx, wsIntermediateDir);
 #endif
+		}
+		else if (a_parameters.getProjectType() == EProjectType::eMakeFile)
+		{
+			const std::string sWorkingCopyCompileFile = getCompileFileWorkingCopy(a_sCompileFile);
+			if (!cloneCompileFile(a_parameters.getProject(), a_sCompileFile, sWorkingCopyCompileFile))
+			{
+				logger::add(logger::EType::eError, "Couldn't create working copy file for " + a_sCompileFile);
+				return std::unique_ptr<projectFile::IProject>(nullptr);
+			}
+			const std::string sStdAfx; // TODO
+			return std::make_unique<make::CMakeProject>(a_parameters, sWorkingCopyCompileFile, sStdAfx);
 		}
 
 		return std::unique_ptr<projectFile::IProject>(nullptr);		

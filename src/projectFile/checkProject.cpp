@@ -82,7 +82,8 @@ namespace projectFile
 		}		
 		// print includes to ignore
 		printFiles("includes to ignore:", a_parameters.getIgnoreIncludes());
-		logger::add(logger::EType::eMessage, "configuration: " + a_parameters.getProjectConfiguration().m_sPlatform + "/" + a_parameters.getProjectConfiguration().m_sConfiguration);
+		if (a_parameters.getProjectType() == EProjectType::eMsBuild)
+			logger::add(logger::EType::eMessage, "configuration: " + a_parameters.getProjectConfiguration().m_sPlatform + "/" + a_parameters.getProjectConfiguration().m_sConfiguration);
 	}
 
 	void checkProject(const CParameters &a_parameters)
