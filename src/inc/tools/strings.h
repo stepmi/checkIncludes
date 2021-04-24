@@ -52,11 +52,11 @@ namespace tools
 			typename T::size_type iPosStart = 0;
 			while (true)
 			{
-				const typename T::size_type iPosSeperator = a_sSource.find(a_sSeparator, iPosStart);
-				if (T::npos != iPosSeperator)
+				const typename T::size_type iPosSeparator = a_sSource.find(a_sSeparator, iPosStart);
+				if (T::npos != iPosSeparator)
 				{
-					result.emplace_back(a_sSource.substr(iPosStart, iPosSeperator - iPosStart));
-					iPosStart = iPosSeperator + a_sSeparator.length();
+					result.emplace_back(a_sSource.substr(iPosStart, iPosSeparator - iPosStart));
+					iPosStart = iPosSeparator + a_sSeparator.length();
 				}
 				else
 				{

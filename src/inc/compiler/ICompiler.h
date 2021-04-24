@@ -5,6 +5,7 @@
 #include "tools/interface.h"
 #include "main/ECompilerType.h"
 #include "compileFile/CCompileFileInfo.h"
+#include "tools/platforms.h"
 
 class CParameters;
 
@@ -19,7 +20,7 @@ namespace compiler
 	{
 		eReBuild, // = clean & compile
 		eCompile,
-		//ePreCompile
+		ePreCompile
 	};
 
 	enum class EOption
@@ -40,7 +41,9 @@ namespace compiler
 	ci_interface ICompiler
 	{
 		virtual ~ICompiler() = default;		
-		virtual EResult run(const compileFile::ICompileFile &a_compileFile, const EAction a_eAction, const CParameters &a_parameters, const OPTIONS &a_options) const = 0;
+		// a_rsResultFile is used for preprocess output only
+		virtual EResult run(const compileFile::ICompileFile &a_compileFile, const EAction a_eAction, const CParameters &a_parameters, 
+			const OPTIONS &a_options, platform::string &a_rsResultFile) const = 0;
 		virtual ECompilerType getType() const = 0;
 		virtual std::string getCompileFileFromCommandLine(const compileFile::COMMANDLINE &a_commandLine) const = 0;
 	};		

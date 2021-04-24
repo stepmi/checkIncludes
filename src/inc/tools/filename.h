@@ -9,7 +9,7 @@ namespace tools
 	{
 		std::string getSpecificFileName(const std::string &a_sFileName);
 
-		platform::string getTempFileName();
+		platform::string getTempFileName(const std::string &a_sExtension);
 
 		bool isIncludeFile(const std::string &a_sFileName);
 		bool hasDirectory(const std::string &a_sFileName);

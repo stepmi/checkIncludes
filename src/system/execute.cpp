@@ -4,6 +4,7 @@
 #include "tools/filename.h"
 #include "tools/filesystem.h"
 #include <array>
+#include "system/exit.h"
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 	#include <windows.h>
@@ -50,12 +51,15 @@ namespace execute
 	public:
 		CTempFile(const platform::string &a_sFileName, const ::HANDLE a_handle) :
 			m_sFileName(a_sFileName), m_handle(a_handle)
-		{}
+		{
+			exitHandler::add(m_sFileName);
+		}
 
 		~CTempFile()
 		{
 			CloseHandle(m_handle);
 			tools::filesystem::removeAll(m_sFileName);
+			exitHandler::remove(m_sFileName);
 		}
 
 		::HANDLE getHandle() const
@@ -80,7 +84,7 @@ namespace execute
 		sa.lpSecurityDescriptor = nullptr;
 		sa.bInheritHandle = TRUE;
 
-		const auto sFileName = tools::filename::getTempFileName();
+		const auto sFileName = tools::filename::getTempFileName(".txt");
 		::HANDLE handle = CreateFileA(sFileName.string().c_str(),
 			FILE_APPEND_DATA,
 			FILE_SHARE_WRITE | FILE_SHARE_READ,
@@ -162,29 +166,76 @@ namespace execute
 
 #else
 
-	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, std::string &a_rsStdOut)
+	class CPipe
 	{
-		EResult eResult = EResult::eError;
+	public:
+		CPipe(FILE *a_pFile) :
+			m_pFile(a_pFile)
+		{}
 
-		const size_t iBufSize = 1000;
-		const size_t iReadSize = iBufSize - 1;
-		std::array<char, iBufSize> buffer;
-		std::unique_ptr<FILE, decltype(&pclose)> upPipe(popen(a_sCommandline.c_str(), "r"), pclose);
-		if (upPipe)
+		~CPipe()
 		{
-			while(true)
+			if (m_pFile)
+				pclose(m_pFile);
+		}
+
+		std::string getData()
+		{
+			std::string result;
+			const size_t iBufSize = 1000;
+			const size_t iReadSize = iBufSize - 1;
+			std::array<char, iBufSize> buffer;
+			while (true)
 			{
-                const size_t iRead = fread(buffer.data(), 1, iReadSize, upPipe.get());
+				const size_t iRead = fread(buffer.data(), 1, iReadSize, m_pFile);
 				if (iRead != 0)
 				{
 					buffer[iRead] = 0;
-					a_rsStdOut += buffer.data();
+					result += buffer.data();
 				}
 				if (iRead != iReadSize)
 					break;
 			}
-			// TODO
-			return EResult::eOk;
+			return result;
+		}
+
+		EResult close()
+		{
+			EResult result = EResult::eError;
+			if (m_pFile)
+			{
+				int iStatus = pclose(m_pFile);
+				if (WIFEXITED(iStatus))
+				{
+					//If you need to do something when the pipe exited, this is the time.
+					iStatus = WEXITSTATUS(iStatus);
+					result = iStatus == 0 ? EResult::eOk : EResult::eFailed;
+				}
+				m_pFile = nullptr;
+			}
+			return result;
+		}
+
+	private:
+		FILE *m_pFile = nullptr;
+	};
+
+	std::unique_ptr<CPipe> createPipe(const std::string &a_sCommandline)
+	{
+		FILE* pFile = popen(a_sCommandline.c_str(), "r");
+		if (pFile)
+			return std::make_unique<CPipe>(pFile);
+		return std::unique_ptr<CPipe>(nullptr);
+	}
+
+	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, std::string &a_rsStdOut)
+	{
+		EResult eResult = EResult::eError;
+		auto upPipe = createPipe(a_sCommandline);
+		if (upPipe)
+		{
+			a_rsStdOut = upPipe->getData();
+			return upPipe->close();
 		}
 
 		logger::add(logger::EType::eError, a_sCommandline + " failed.");
@@ -193,12 +244,11 @@ namespace execute
 
 	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
 	{
-		std::unique_ptr<FILE, decltype(&pclose)> upPipe(popen(a_sCommandline.c_str(), "r"), pclose);
+		EResult eResult = EResult::eError;
+		auto upPipe = createPipe(a_sCommandline);
 		if (upPipe)
-		{
-			// TODO
-			return EResult::eOk;
-		}
+			return upPipe->close();
+
 		logger::add(logger::EType::eError, a_sCommandline + " failed.");
 		return EResult::eError;
 	}

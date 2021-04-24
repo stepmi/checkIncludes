@@ -1,4 +1,5 @@
 #include "msvc/CMsCompiler.h"
+#include "msvc/CMsProjectFile.h"
 #include <string>
 #include "system/logger.h"
 #include "tools/strings.h"
@@ -28,14 +29,19 @@ namespace msvc
 			return ECompilerType::eMsVc;
 		}
 
-		compiler::EResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, const compiler::OPTIONS &a_options) const override
+		compiler::EResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
+			const compiler::OPTIONS &a_options, platform::string &a_rsResultFile) const override
 		{
 			const std::string sCommandLine = getCommandLine(a_compileFile, a_eAction, a_parameters, a_options);
 			logger::add(logger::EType::eCommandLines, sCommandLine);
 
 			auto eResult = execute::runOutputToConsole(sCommandLine, platform::string());
 			if (eResult == execute::EResult::eOk)
+			{
+				if (a_eAction == compiler::EAction::ePreCompile)
+					a_rsResultFile = getPreProcessResultPath(a_compileFile);
 				return compiler::EResult::eOk;
+			}
 			else if (eResult == execute::EResult::eFailed)
 				return compiler::EResult::eFailed; // compile failed
 			
@@ -54,6 +60,8 @@ namespace msvc
 			if (a_eAction == compiler::EAction::eCompile)
 				return ws + "ClCompile";
 			else if (a_eAction == compiler::EAction::eReBuild)
+				return ws + "Clean;ClCompile";
+			else if (a_eAction == compiler::EAction::ePreCompile)
 				return ws + "Clean;ClCompile";
 			else
 				return "";
@@ -94,6 +102,15 @@ namespace msvc
 		{
 			const std::string m_wsQuote = "\"";
 			return m_wsQuote + a + m_wsQuote;
+		}
+
+		static platform::string getPreProcessResultPath(const compileFile::ICompileFile &a_compileFile)
+		{			
+			auto sCompileFileRelative = STRING_TO_PLATFORM(a_compileFile.getFileWorkingCopy());
+			auto sPath = a_compileFile.getProjectFileWorkingCopy().parent_path() / STRING_TO_PLATFORM(msvc::CMsProjectFile::getIntermediateDirectory(a_compileFile.getFile()));
+			sPath /= sCompileFileRelative.filename();
+			sPath.replace_extension("i");
+			return sPath;
 		}
 
 	private:

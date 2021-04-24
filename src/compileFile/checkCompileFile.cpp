@@ -8,7 +8,6 @@
 #include "tools/strings.h"
 #include "readCompileFile.h"
 #include "cloneProject.h"
-#include "preProcess.h"
 #include "projectFile/IThread.h"
 #include "compiler/createCompiler.h"
 
@@ -37,7 +36,8 @@ namespace compileFile
 		if (!a_compileFile.switchInclude(a_hInclude, !bSwitchIncludeOn))
 			return ETestIncludeResult::eFileSystemError;		
 
-		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eCompile, a_parameters, getCompileOptions(a_parameters));
+		platform::string sResultUnused;
+		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eCompile, a_parameters, getCompileOptions(a_parameters), sResultUnused);
 		if (eResult != compiler::EResult::eOk)
 		{
 			// reenable the include
@@ -73,7 +73,8 @@ namespace compileFile
 		if (pPossiblePreCompiledHeader)
 		{
 			a_compileFile.switchInclude(pPossiblePreCompiledHeader->getHandle(), !bSwitchIncludeOn);
-			const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
+			platform::string sResultUnused;
+			const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters), sResultUnused);
 			if (eResult == compiler::EResult::eOk)
 			{
 				// file compiles without the precompiled header.
@@ -86,14 +87,15 @@ namespace compileFile
 			a_compileFile.switchInclude(pPossiblePreCompiledHeader->getHandle(), bSwitchIncludeOn);
 		}
 
-		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
+		platform::string sResultUnused;
+		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters), sResultUnused);
 		if (eResult != compiler::EResult::eOk)
 		{
 			// the file doesn't compile at all. That's an error.
 			logger::add(logger::EType::eError, "Abort checking file " + tools::strings::getQuoted(a_compileFile.getFile()) + ". File doesn't compile at all. See errors below.");
 			// we want to let the user know, why the file didn't compile
 			if (!a_parameters.getHasOption(EOption::eCompileLog))
-				a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, { compiler::EOption::eLogErrors });
+				a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, { compiler::EOption::eLogErrors }, sResultUnused);
 			return false;		
 		}
 
@@ -117,11 +119,7 @@ namespace compileFile
 
 			if (a_compileFile.addMarkersForPreProcess())
 			{
-				const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
-				if (eResult == compiler::EResult::eOk)
-				{
-					sPreProcessResultFile = preprocess::getPreProcessResultPath(a_project, a_parameters, a_compileFile);
-				}
+				a_compiler.run(a_compileFile, compiler::EAction::ePreCompile, a_parameters, getCompileOptions(a_parameters), sPreProcessResultFile);				
 			}
 			a_compileFile.removeMarkersForPreProcess();
 		}
@@ -172,7 +170,7 @@ namespace compileFile
 			auto upProject = cloneProject(a_parameters, a_compileFileInfo.getCompileFile());
 			if (upProject)
 			{
-				auto upCompileFile = readCompileFile(a_compileFileInfo.getCompileFile(), upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy());
+				auto upCompileFile = readCompileFile(a_compileFileInfo.getCompileFile(), upProject->getCompileFileWorkingCopy(), upProject->getProjectFileWorkingCopy(), a_compileFileInfo.getCommandLine());
 				if (upCompileFile)
 				{
 					if (!upCompileFile->getIncludes().empty())

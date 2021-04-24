@@ -16,10 +16,10 @@ namespace compileFile
 	}
 
 	CCompileFile::CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
-		const platform::string &a_wsProjectFile, 
+		const platform::string &a_wsProjectFile, const COMMANDLINE &a_commandLine,
 		const std::string &a_sSrcCode, const INCLUDES &a_includes) :
 		m_sCompileFile(a_sCompileFile), m_sCompileFileWorkingCopy(a_sCompileFileWorkingCopy),
-		m_wsProjectFile(a_wsProjectFile), 
+		m_wsProjectFile(a_wsProjectFile), m_commandLine(a_commandLine),
 		m_sSrcCode(a_sSrcCode), m_includes(a_includes),
 		m_iLenDisableInclude(static_cast<int>(m_sDisableInclude.size()))
 	{

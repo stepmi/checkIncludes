@@ -154,9 +154,6 @@
     <ClCompile Include="src\tools\filename.cpp">
       <Filter>Source Files\tools</Filter>
     </ClCompile>
-    <ClCompile Include="src\compileFile\preProcess.cpp">
-      <Filter>Source Files\compileFile</Filter>
-    </ClCompile>
     <ClCompile Include="src\system\execute.cpp">
       <Filter>Source Files\system</Filter>
     </ClCompile>
@@ -302,9 +299,6 @@
     </ClInclude>
     <ClInclude Include="src\inc\tools\filename.h">
       <Filter>Source Files\inc\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="src\compileFile\preProcess.h">
-      <Filter>Source Files\compileFile</Filter>
     </ClInclude>
     <ClInclude Include="src\inc\system\execute.h">
       <Filter>Source Files\inc\system</Filter>

@@ -2,6 +2,7 @@
 
 #include "compileFile/ICompileFile.h"
 #include "compileFile/CIncludeFile.h"
+#include "compileFile/CCompileFileInfo.h"
 #include "main/ECompilerType.h"
 
 namespace compileFile
@@ -10,7 +11,7 @@ namespace compileFile
 	{
 	public:
 		CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
-			const platform::string &a_wsProjectFile,
+			const platform::string &a_wsProjectFile, const COMMANDLINE &a_commandLine,
 			const std::string &a_sSrcCode, const INCLUDES &a_includes);
 
 		~CCompileFile();
@@ -18,6 +19,7 @@ namespace compileFile
 		const std::string &getFileWorkingCopy() const override { return m_sCompileFileWorkingCopy; }
 		const std::string &getFile() const override { return m_sCompileFile; } // the original filename
 		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }
+		const COMMANDLINE &getCommandLine() const override { return m_commandLine; }
 
 		INCLUDE_HANDLES getIncludesToCheck() const override;
 		INCLUDE_HANDLES getIncludes() const override;
@@ -51,6 +53,8 @@ namespace compileFile
 
 		const std::string m_sDisableInclude = "// disabled by checkIncludes ";
 		const int m_iLenDisableInclude = 0;
+
+		COMMANDLINE m_commandLine; // compiler call and its arguments. may be empty for some compiler types.	
 	};
 
 	platform::string getCompileFilePath(const std::string &a_sCompileFile, const platform::string &a_wsProjectFile);
