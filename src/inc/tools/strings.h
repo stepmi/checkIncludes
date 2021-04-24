@@ -43,6 +43,11 @@ namespace tools
 
 		template<typename T> std::vector<T> splitString(const T& a_sSource, const T& a_sSeparator)
 		{
+			if (a_sSeparator.empty())			
+				return { a_sSource };
+			if (a_sSource.empty())
+				return {};
+
 			std::vector<T> result;
 			typename T::size_type iPosStart = 0;
 			while (true)
