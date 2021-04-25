@@ -38,8 +38,18 @@ namespace tools
 
 		bool copyFile(const platform::string &a_wsSrc, const platform::string &a_wsDest)
 		{
+
+#if (defined __GNUC__) && (__GNUC__ <= 8)
+			// std::filesystem::copy_file didn't work as expected with gcc8/ubuntu 16.04
+			// apparently it the destination file was an older version of the source file, after copy_file.
+			// maybe this is a problem of using a ubuntu-virtual machine running on a windows filesystem.
+			// the src and dest files were located on a shared windows-harddisk, mounted to ubuntu.
+			auto sData = readFile(a_wsSrc);
+			return writeFile(a_wsDest, sData);
+#else
 			std::error_code errorCode;
 			return std::filesystem::copy_file(a_wsSrc, a_wsDest, std::filesystem::copy_options::overwrite_existing, errorCode);
+#endif
 		}
 
 		platform::string resolveSymLink(const platform::string &a_wsPath)
