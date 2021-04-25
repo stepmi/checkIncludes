@@ -164,6 +164,12 @@ namespace execute
 		return run(a_sCommandline, sWorkingDir, nullptr);
 	}
 
+	EResult runQuiet(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
+	{
+		std::string sStdOut;
+		return runOutputToString(a_sCommandline, a_sWorkingDir, sStdOut);
+	}
+
 #else
 
 	class CPipe
@@ -246,6 +252,17 @@ namespace execute
 	{
 		EResult eResult = EResult::eError;
 		auto upPipe = createPipe(a_sCommandline);
+		if (upPipe)
+			return upPipe->close();
+
+		logger::add(logger::EType::eError, a_sCommandline + " failed.");
+		return EResult::eError;
+	}
+
+	EResult runQuiet(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
+	{
+		EResult eResult = EResult::eError;
+		auto upPipe = createPipe(a_sCommandline + " 2>&1 >/dev/null");
 		if (upPipe)
 			return upPipe->close();
 

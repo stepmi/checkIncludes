@@ -11,6 +11,12 @@
 namespace compiler
 {
 
+	bool getHasOption(const compiler::OPTIONS &a_options, const compiler::EOption a_eOption)
+	{
+		return tools::find(a_options, a_eOption);
+	}
+
+
 	class CTempFile
 	{
 	public:
@@ -143,12 +149,14 @@ namespace compiler
 		// simple options
 		static const std::string stopAfterCompile = "-c"; // Compile or assemble the source files, but do not link
 		static const std::string stopAfterPreProcess = "-E"; // Stop after the preprocessing stage; do not run the compiler proper		
-		static const std::string keepComments = "-C"; // Do not discard comments
-
+		static const std::string dependencies = "-MD"; // -MD is equivalent to -M -MF file, except that -E is not implied.		
+		//static const std::string keepComments = "-C"; // Do not discard comments
+		//static const std::string printCommands = "-v"; // Print (on standard error output) the commands executed to run the stages of compilation. 
+		
 		// file options
-		static const std::string output = "-o"; // -o file. Place the primary output in file file
+		static const std::string outputFile = "-o"; // -o file. Place the primary output in file file
 		static const std::string targetFile = "-MT";	// -MT target. Change the target of the rule emitted by dependency generation
-		static const std::string dependencies = "-MF";	// -MF file. When used with -M or-MM, specifies a file to write the dependencies to
+		static const std::string dependenciesFile = "-MF";	// -MF file. When used with -M or-MM, specifies a file to write the dependencies to
 	}
 
 	compiler::EResult CGppCompiler::run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
@@ -157,16 +165,13 @@ namespace compiler
 		auto commandline = a_compileFile.getCommandLine();
 		if (commandline.size() > 1)
 		{
-			removeFileOption(options::targetFile, commandline);
-
 			std::string sOutputExtension;
 			if (a_eAction == compiler::EAction::ePreCompile)
 			{
 				sOutputExtension = ".d";
 				removeOption(options::stopAfterCompile, commandline);
 				setOption(options::stopAfterPreProcess, commandline);
-				// keeping comments is important, because we added comments to filter our includes.
-				setOption(options::keepComments, commandline);
+				setOption(options::dependencies, commandline);				
 			}
 			else if (a_eAction == compiler::EAction::eCompile ||
 				a_eAction == compiler::EAction::eReBuild)
@@ -174,17 +179,28 @@ namespace compiler
 				sOutputExtension = ".o";
 				setOption(options::stopAfterCompile, commandline);
 			}
+			// 2 different output files.
+			// dependenciesFile is always discarded after build.
+			// outputFile is kept for a preprocess build (because it contains the preprocess result),
+			// and discarded for all other builds.
 
 			CTempFile outputFile(sOutputExtension);
-			setFileOption(options::output, outputFile.getFileName(), commandline);
+			setFileOption(options::outputFile, outputFile.getFileName(), commandline);
+			setFileOption(options::targetFile, outputFile.getFileName(), commandline);
 
 			CTempFile dependenciesFile(".d");
-			setFileOption(options::dependencies, dependenciesFile.getFileName(), commandline);
+			setFileOption(options::dependenciesFile, dependenciesFile.getFileName(), commandline);
 
 			setCompileFile(a_compileFile.getFileWorkingCopy(), commandline);
 
 			const auto sCommandLine = execute::createCommandFromCommandLine(commandline);			
-			auto eResult = execute::runOutputToConsole(sCommandLine, platform::string());
+
+			execute::EResult eResult = execute::EResult::eError;
+			if (getHasOption(a_options, compiler::EOption::eLogErrors))
+				eResult = execute::runOutputToConsole(sCommandLine, platform::string());
+			else							
+				eResult = execute::runQuiet(sCommandLine, platform::string());			
+
 			if (eResult == execute::EResult::eOk)
 			{
 				if (a_eAction == compiler::EAction::ePreCompile)
@@ -192,7 +208,9 @@ namespace compiler
 				return compiler::EResult::eOk;
 			}
 			else if (eResult == execute::EResult::eFailed)
+			{				
 				return compiler::EResult::eFailed; // compile failed
+			}
 
 			return compiler::EResult::eError; // compile couldn't be started at all
 		}
