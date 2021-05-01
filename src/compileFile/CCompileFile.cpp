@@ -18,14 +18,17 @@ namespace compileFile
 	CCompileFile::CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
 		const platform::string &a_wsProjectFile, const COMMANDLINE &a_commandLine,
 		const std::string &a_sSrcCode, const INCLUDES &a_includes) :
-		m_sCompileFile(a_sCompileFile), m_sCompileFileWorkingCopy(a_sCompileFileWorkingCopy),
-		m_wsProjectFile(a_wsProjectFile), m_commandLine(a_commandLine),
-		m_sSrcCode(a_sSrcCode), m_includes(a_includes),
+		m_sCompileFile(a_sCompileFile),
+		m_sCompileFileWorkingCopy(a_sCompileFileWorkingCopy),
+		m_wsProjectFile(a_wsProjectFile),
+		m_sSrcCode(a_sSrcCode),
+		m_includes(a_includes),
 		m_iLenDisableInclude(static_cast<int>(m_sDisableInclude.size())),
-		m_managedFileWorkingCopy(getFilePath())
-	{		
+		m_commandLine(a_commandLine),
+		m_managedFileWorkingCopy(getCompileFilePath(a_sCompileFileWorkingCopy, a_wsProjectFile))
+	{
 	}
-	
+
 	INCLUDE_HANDLES CCompileFile::getIncludesToCheck() const
 	{
 		INCLUDE_HANDLES result;
@@ -40,8 +43,8 @@ namespace compileFile
 	INCLUDE_HANDLES CCompileFile::getIncludes() const
 	{
 		INCLUDE_HANDLES result;
-		for (auto &include : m_includes)					
-			result.push_back(include.getHandle());		
+		for (auto &include : m_includes)
+			result.push_back(include.getHandle());
 		return result;
 	}
 
@@ -61,7 +64,7 @@ namespace compileFile
 	}
 
 	bool CCompileFile::switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn)
-	{			
+	{
 		CInclude *pInclude = getInclude(a_hInclude);
 		if (pInclude)
 		{
@@ -84,7 +87,7 @@ namespace compileFile
 	{
 		return switchMarkersForPreProcess(false);
 	}
-	
+
 	bool CCompileFile::switchMarkersForPreProcess(const bool a_bSwitchOn)
 	{
 		for (auto &include : m_includes)
@@ -92,19 +95,9 @@ namespace compileFile
 		return tools::filesystem::writeFile(getFilePath(), m_sSrcCode);
 	}
 
-	/*void CCompileFile::switchOffIncludeStdAfx()
-	{
-		if (!m_includes.empty())
-		{
-			// stdafx is always first
-			switchInclude(m_includes.front().getHandle(), false);
-			m_includes.erase(m_includes.begin()); 
-		}
-	}*/
-
 	platform::string CCompileFile::getFilePath() const
 	{
-		return getCompileFilePath(m_sCompileFileWorkingCopy, m_wsProjectFile);
+		return m_managedFileWorkingCopy.getFileName();
 	}
 
 	bool CCompileFile::switchIncludeInSrcAndFile(CInclude &a_include, const bool a_bSwitchOn)
@@ -122,12 +115,12 @@ namespace compileFile
 		const std::string sMarkerLine = a_include.getMarkerLineForPreProcess();
 		if (a_bSwitchOn)
 			m_sSrcCode.insert(a_include.getPos(), sMarkerLine);
-		else					
+		else
 			m_sSrcCode.erase(a_include.getPos(), static_cast<size_t>(sMarkerLine.size()));
-			
+
 		const int iMarkerLineLength = static_cast<int>(sMarkerLine.size());
 		const int iOffset = a_bSwitchOn ? iMarkerLineLength : -iMarkerLineLength;
-		offsetIncludesAfter(a_include.getHandle(), iOffset);		
+		offsetIncludesAfter(a_include.getHandle(), iOffset);
 	}
 
 	void CCompileFile::offsetIncludesAfter(const HANDLE_INCLUDE a_hInclude, const int a_iOffset)
@@ -139,16 +132,16 @@ namespace compileFile
 			{
 				if (include.getHandle() == a_hInclude)
 					bStartOffsetting = true;
-				
-			}
-			else			
-				include.offset(a_iOffset);			
-		}
-	}	
 
-	// we don't remove any includes. we just set them to ignore. 
+			}
+			else
+				include.offset(a_iOffset);
+		}
+	}
+
+	// we don't remove any includes. we just set them to ignore.
 	void CCompileFile::filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const std::string &a_sPreProcessResult)
-	{	
+	{
 		filterIncludesByIncludesToIgnore(m_sCompileFile, a_includesToIgnore, m_includes);
 
 		// very likely a file which is named the same as the compile file should never be removed.
@@ -156,7 +149,7 @@ namespace compileFile
 
 		filterIncludesByPreProcessResult(a_sPreProcessResult, m_includes);
 	}
-	
+
 
 }
 

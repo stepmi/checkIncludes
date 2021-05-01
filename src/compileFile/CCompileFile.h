@@ -14,7 +14,7 @@ namespace compileFile
 		CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
 			const platform::string &a_wsProjectFile, const COMMANDLINE &a_commandLine,
 			const std::string &a_sSrcCode, const INCLUDES &a_includes);
-		
+
 		const std::string &getFileWorkingCopy() const override { return m_sCompileFileWorkingCopy; }
 		const std::string &getFile() const override { return m_sCompileFile; } // the original filename
 		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }
@@ -45,8 +45,6 @@ namespace compileFile
 		std::string m_sCompileFile, // the original name
             m_sCompileFileWorkingCopy;
 
-		tools::CManagedFile m_managedFileWorkingCopy;
-
         platform::string m_wsProjectFile;
 
         std::string m_sSrcCode;
@@ -55,7 +53,8 @@ namespace compileFile
 		const std::string m_sDisableInclude = "// disabled by checkIncludes ";
 		const int m_iLenDisableInclude = 0;
 
-		COMMANDLINE m_commandLine; // compiler call and its arguments. may be empty for some compiler types.	
+		COMMANDLINE m_commandLine; // compiler call and its arguments. may be empty for some compiler types.
+		tools::CManagedFile m_managedFileWorkingCopy;
 	};
 
 	platform::string getCompileFilePath(const std::string &a_sCompileFile, const platform::string &a_wsProjectFile);

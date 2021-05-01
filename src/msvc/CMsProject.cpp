@@ -10,8 +10,8 @@ namespace msvc
 		const std::string &a_sStdAfx, const platform::string &a_wsIntermediateDir) :
 		m_parameters(a_parameters), m_wsProjectFile(a_wsProjectFile), m_sCompileFile(a_sCompileFile), 
 		m_sStdAfx(a_sStdAfx), m_wsIntermediateDir(a_wsIntermediateDir),
-		m_managedFileWorkingCopy(m_wsProjectFile),
-		m_managedFileIntermediateDir(m_wsIntermediateDir)
+		m_managedFileWorkingCopy(a_wsProjectFile),
+		m_managedFileIntermediateDir(a_wsIntermediateDir)
 	{		
 	}	
 

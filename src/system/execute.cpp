@@ -52,12 +52,12 @@ namespace execute
 	public:
 		CTempFile(const platform::string &a_sFileName, const ::HANDLE a_handle) :
 			m_managedFile(a_sFileName), m_handle(a_handle)
-		{			
+		{
 		}
 
 		~CTempFile()
 		{
-			CloseHandle(m_handle);			
+			CloseHandle(m_handle);
 		}
 
 		::HANDLE getHandle() const
@@ -71,7 +71,7 @@ namespace execute
 		}
 
 	private:
-		::HANDLE m_handle;		
+		::HANDLE m_handle;
 		tools::CManagedFile m_managedFile;
 	};
 
@@ -232,9 +232,8 @@ namespace execute
 		return std::unique_ptr<CPipe>(nullptr);
 	}
 
-	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &a_sWorkingDir, std::string &a_rsStdOut)
+	EResult runOutputToString(const std::string &a_sCommandline, const platform::string &, std::string &a_rsStdOut)
 	{
-		EResult eResult = EResult::eError;
 		auto upPipe = createPipe(a_sCommandline);
 		if (upPipe)
 		{
@@ -246,9 +245,8 @@ namespace execute
 		return EResult::eError;
 	}
 
-	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
+	EResult runOutputToConsole(const std::string &a_sCommandline, const platform::string &)
 	{
-		EResult eResult = EResult::eError;
 		auto upPipe = createPipe(a_sCommandline);
 		if (upPipe)
 			return upPipe->close();
@@ -257,9 +255,8 @@ namespace execute
 		return EResult::eError;
 	}
 
-	EResult runQuiet(const std::string &a_sCommandline, const platform::string &a_sWorkingDir)
+	EResult runQuiet(const std::string &a_sCommandline, const platform::string &)
 	{
-		EResult eResult = EResult::eError;
 		auto upPipe = createPipe(a_sCommandline + " 2>&1 >/dev/null");
 		if (upPipe)
 			return upPipe->close();
