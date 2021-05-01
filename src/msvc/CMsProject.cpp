@@ -9,21 +9,11 @@ namespace msvc
 	CMsProject::CMsProject(const CParameters &a_parameters, const platform::string &a_wsProjectFile, const std::string &a_sCompileFile, 
 		const std::string &a_sStdAfx, const platform::string &a_wsIntermediateDir) :
 		m_parameters(a_parameters), m_wsProjectFile(a_wsProjectFile), m_sCompileFile(a_sCompileFile), 
-		m_sStdAfx(a_sStdAfx), m_wsIntermediateDir(a_wsIntermediateDir)
-	{
-		exitHandler::add(m_wsProjectFile);
-		exitHandler::add(m_wsIntermediateDir);
-	}
-
-	CMsProject::~CMsProject()
-	{
-		// remove the working copy and the intermediate dir
-		tools::filesystem::removeAll(m_wsProjectFile);
-		exitHandler::remove(m_wsProjectFile);
-		bool b = tools::filesystem::removeAll(m_wsIntermediateDir);
-		exitHandler::remove(m_wsIntermediateDir);		
-	}
-
+		m_sStdAfx(a_sStdAfx), m_wsIntermediateDir(a_wsIntermediateDir),
+		m_managedFileWorkingCopy(m_wsProjectFile),
+		m_managedFileIntermediateDir(m_wsIntermediateDir)
+	{		
+	}	
 
 	platform::string CMsProject::getProjectFileWorkingCopy() const
 	{

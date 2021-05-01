@@ -21,15 +21,9 @@ namespace compileFile
 		m_sCompileFile(a_sCompileFile), m_sCompileFileWorkingCopy(a_sCompileFileWorkingCopy),
 		m_wsProjectFile(a_wsProjectFile), m_commandLine(a_commandLine),
 		m_sSrcCode(a_sSrcCode), m_includes(a_includes),
-		m_iLenDisableInclude(static_cast<int>(m_sDisableInclude.size()))
-	{
-		exitHandler::add(getFilePath());
-	}
-
-	CCompileFile::~CCompileFile()
-	{
-		tools::filesystem::removeAll(getFilePath());
-		exitHandler::remove(getFilePath());
+		m_iLenDisableInclude(static_cast<int>(m_sDisableInclude.size())),
+		m_managedFileWorkingCopy(getFilePath())
+	{		
 	}
 	
 	INCLUDE_HANDLES CCompileFile::getIncludesToCheck() const

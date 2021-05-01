@@ -4,6 +4,7 @@
 #include "compileFile/CIncludeFile.h"
 #include "compileFile/CCompileFileInfo.h"
 #include "main/ECompilerType.h"
+#include "tools/CManagedFile.h"
 
 namespace compileFile
 {
@@ -13,9 +14,7 @@ namespace compileFile
 		CCompileFile(const std::string &a_sCompileFile, const std::string &a_sCompileFileWorkingCopy,
 			const platform::string &a_wsProjectFile, const COMMANDLINE &a_commandLine,
 			const std::string &a_sSrcCode, const INCLUDES &a_includes);
-
-		~CCompileFile();
-
+		
 		const std::string &getFileWorkingCopy() const override { return m_sCompileFileWorkingCopy; }
 		const std::string &getFile() const override { return m_sCompileFile; } // the original filename
 		const platform::string &getProjectFileWorkingCopy() const override { return m_wsProjectFile; }
@@ -45,6 +44,8 @@ namespace compileFile
 	private:
 		std::string m_sCompileFile, // the original name
             m_sCompileFileWorkingCopy;
+
+		tools::CManagedFile m_managedFileWorkingCopy;
 
         platform::string m_wsProjectFile;
 

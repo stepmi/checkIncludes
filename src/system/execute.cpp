@@ -5,6 +5,7 @@
 #include "tools/filesystem.h"
 #include <array>
 #include "system/exit.h"
+#include "tools/CManagedFile.h"
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 	#include <windows.h>
@@ -50,16 +51,13 @@ namespace execute
 	{
 	public:
 		CTempFile(const platform::string &a_sFileName, const ::HANDLE a_handle) :
-			m_sFileName(a_sFileName), m_handle(a_handle)
-		{
-			exitHandler::add(m_sFileName);
+			m_managedFile(a_sFileName), m_handle(a_handle)
+		{			
 		}
 
 		~CTempFile()
 		{
-			CloseHandle(m_handle);
-			tools::filesystem::removeAll(m_sFileName);
-			exitHandler::remove(m_sFileName);
+			CloseHandle(m_handle);			
 		}
 
 		::HANDLE getHandle() const
@@ -69,12 +67,12 @@ namespace execute
 
 		std::string readFile() const
 		{
-			return tools::filesystem::readFile(m_sFileName);
+			return tools::filesystem::readFile(m_managedFile.getFileName());
 		}
 
 	private:
-		::HANDLE m_handle;
-		platform::string m_sFileName;
+		::HANDLE m_handle;		
+		tools::CManagedFile m_managedFile;
 	};
 
 	std::unique_ptr<CTempFile> createTempFile()
