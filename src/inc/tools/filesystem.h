@@ -13,6 +13,8 @@ namespace tools
 		bool copyFile(const platform::string &a_wsSrc, const platform::string &a_wsDest);		
 
 		platform::string resolveSymLink(const platform::string &a_wsPath);
+
+		
 	}
 
 }

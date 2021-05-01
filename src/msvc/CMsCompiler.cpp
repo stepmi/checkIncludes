@@ -29,23 +29,26 @@ namespace msvc
 			return ECompilerType::eMsVc;
 		}
 
-		compiler::EResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
-			const compiler::OPTIONS &a_options, platform::string &a_rsResultFile) const override
+		compiler::CResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
+			const compiler::OPTIONS &a_options) const override
 		{
 			const std::string sCommandLine = getCommandLine(a_compileFile, a_eAction, a_parameters, a_options);
 			logger::add(logger::EType::eCommandLines, sCommandLine);
 
+			compiler::CResult result;
 			auto eResult = execute::runOutputToConsole(sCommandLine, platform::string());
 			if (eResult == execute::EResult::eOk)
 			{
 				if (a_eAction == compiler::EAction::ePreCompile)
-					a_rsResultFile = getPreProcessResultPath(a_compileFile);
-				return compiler::EResult::eOk;
+					result.upResultFile = std::make_unique<tools::CManagedFile>(getPreProcessResultPath(a_compileFile));
+				result.eResult = compiler::EResult::eOk;
 			}
 			else if (eResult == execute::EResult::eFailed)
-				return compiler::EResult::eFailed; // compile failed
+				result.eResult = compiler::EResult::eFailed; // compile failed
+			else
+				result.eResult = compiler::EResult::eError; // compile couldn't be started at all
 			
-			return compiler::EResult::eError; // compile couldn't be started at all
+			return result;
 		}
 
 		std::string getCompileFileFromCommandLine(const compileFile::COMMANDLINE &) const override

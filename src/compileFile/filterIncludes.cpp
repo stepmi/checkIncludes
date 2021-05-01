@@ -45,17 +45,16 @@ namespace compileFile
 		}
 	}
 
-	void filterIncludesByPreProcessResult(const platform::string &a_sPreProcessFile, INCLUDES &a_includes)
+	void filterIncludesByPreProcessResult(const std::string &a_sPreProcessResult, INCLUDES &a_includes)
 	{
 		INCLUDE_HANDLES includesToRemove;
-		{
-			const std::string sPreProcessResult = tools::filesystem::readFile(a_sPreProcessFile);
+		{			
 			size_t iStart = 0;
 			for (auto &include : a_includes)
 			{
 				if (!include.getIgnore())
 				{
-					const size_t iPos = sPreProcessResult.find(include.getMarkerVariableForPreProcess(), iStart);
+					const size_t iPos = a_sPreProcessResult.find(include.getMarkerVariableForPreProcess(), iStart);
 					if (iPos != std::string::npos)
 						iStart = iPos;
 					else

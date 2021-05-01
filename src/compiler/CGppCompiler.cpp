@@ -7,6 +7,7 @@
 #include "tools/filesystem.h"
 #include "tools/filename.h"
 #include "system/execute.h"
+#include "tools/CManagedFile.h"
 
 namespace compiler
 {
@@ -21,40 +22,21 @@ namespace compiler
 	{
 	public:
 		CTempFile(const std::string &a_sExtension) :
-			m_sFileName(tools::filename::getTempFileName(a_sExtension))
-		{
-			exitHandler::add(m_sFileName);
-		}
-
-		~CTempFile()
-		{			
-			if (!m_sFileName.empty())
-			{
-				tools::filesystem::removeAll(m_sFileName);
-				exitHandler::remove(m_sFileName);
-			}
-		}
+			m_managedFile(tools::filename::getTempFileName(a_sExtension))
+		{}
 
 		platform::string release()
 		{
-			platform::string sResult = m_sFileName;
-			exitHandler::remove(m_sFileName);
-			m_sFileName.clear();
-			return sResult;
+			return m_managedFile.release();
 		}
 
 		std::string getFileName() const
 		{
-			return m_sFileName.string();
-		}
-		
-		std::string readFile() const
-		{
-			return tools::filesystem::readFile(m_sFileName);
+			return m_managedFile.getFileName();
 		}
 
-	private:		
-		platform::string m_sFileName;
+	private:
+		tools::CManagedFile m_managedFile;
 	};
 
 
@@ -159,9 +141,10 @@ namespace compiler
 		static const std::string dependenciesFile = "-MF";	// -MF file. When used with -M or-MM, specifies a file to write the dependencies to
 	}
 
-	compiler::EResult CGppCompiler::run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
-		const compiler::OPTIONS &a_options, platform::string &a_rsResultFile) const
+	CResult CGppCompiler::run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
+		const compiler::OPTIONS &a_options) const
 	{
+		CResult result;
 		auto commandline = a_compileFile.getCommandLine();
 		if (commandline.size() > 1)
 		{
@@ -200,21 +183,23 @@ namespace compiler
 				eResult = execute::runOutputToConsole(sCommandLine, platform::string());
 			else							
 				eResult = execute::runQuiet(sCommandLine, platform::string());			
-
+			
 			if (eResult == execute::EResult::eOk)
 			{
 				if (a_eAction == compiler::EAction::ePreCompile)
-					a_rsResultFile = outputFile.release();
-				return compiler::EResult::eOk;
+					result.upResultFile = std::make_unique<tools::CManagedFile>(outputFile.release());
+				result.eResult = compiler::EResult::eOk;
 			}
 			else if (eResult == execute::EResult::eFailed)
 			{				
-				return compiler::EResult::eFailed; // compile failed
+				result.eResult = compiler::EResult::eFailed; // compile failed
 			}
-
-			return compiler::EResult::eError; // compile couldn't be started at all
+			else
+				result.eResult = compiler::EResult::eError; // compile couldn't be started at all
 		}
-		return compiler::EResult::eError; // compile couldn't be started at all
+		result.eResult = compiler::EResult::eError; // compile couldn't be started at all
+
+		return result;
 	}
 
 }

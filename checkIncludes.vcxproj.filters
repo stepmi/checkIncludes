@@ -172,6 +172,9 @@
     <ClCompile Include="src\compiler\CGppCompiler.cpp">
       <Filter>Source Files\compiler</Filter>
     </ClCompile>
+    <ClCompile Include="src\tools\CManagedFile.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\parser\state.h">
@@ -326,6 +329,9 @@
     </ClInclude>
     <ClInclude Include="src\inc\make\CMakeProject.h">
       <Filter>Source Files\inc\make</Filter>
+    </ClInclude>
+    <ClInclude Include="src\inc\tools\CManagedFile.h">
+      <Filter>Source Files\inc\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

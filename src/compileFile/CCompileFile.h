@@ -26,7 +26,7 @@ namespace compileFile
 		const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const override;
 		bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) override;
 
-		void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const platform::string &a_sPreProcessFile) override;
+		void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const std::string &a_sPreProcessResult) override;
 
 		// preprocess
 		bool addMarkersForPreProcess() override;

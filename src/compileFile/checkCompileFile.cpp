@@ -35,15 +35,14 @@ namespace compileFile
 		// disable the include		
 		if (!a_compileFile.switchInclude(a_hInclude, !bSwitchIncludeOn))
 			return ETestIncludeResult::eFileSystemError;		
-
-		platform::string sResultUnused;
-		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eCompile, a_parameters, getCompileOptions(a_parameters), sResultUnused);
-		if (eResult != compiler::EResult::eOk)
+		
+		const compiler::CResult result = a_compiler.run(a_compileFile, compiler::EAction::eCompile, a_parameters, getCompileOptions(a_parameters));
+		if (result.eResult != compiler::EResult::eOk)
 		{
 			// reenable the include
 			if (!a_compileFile.switchInclude(a_hInclude, bSwitchIncludeOn))
 				return ETestIncludeResult::eFileSystemError;
-			if (eResult == compiler::EResult::eFailed)
+			if (result.eResult == compiler::EResult::eFailed)
 				return ETestIncludeResult::eCompileFailed;
 			else
 				return ETestIncludeResult::eCompileError;
@@ -72,10 +71,9 @@ namespace compileFile
 			pPossiblePreCompiledHeader = getPossiblePreCompiledHeader(a_compileFile);
 		if (pPossiblePreCompiledHeader)
 		{
-			a_compileFile.switchInclude(pPossiblePreCompiledHeader->getHandle(), !bSwitchIncludeOn);
-			platform::string sResultUnused;
-			const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters), sResultUnused);
-			if (eResult == compiler::EResult::eOk)
+			a_compileFile.switchInclude(pPossiblePreCompiledHeader->getHandle(), !bSwitchIncludeOn);		
+			const compiler::CResult result = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
+			if (result.eResult == compiler::EResult::eOk)
 			{
 				// file compiles without the precompiled header.
 				// we leave it in this state and return. This is our prefered case.
@@ -86,16 +84,15 @@ namespace compileFile
 			// So we switch it on again and try further.
 			a_compileFile.switchInclude(pPossiblePreCompiledHeader->getHandle(), bSwitchIncludeOn);
 		}
-
-		platform::string sResultUnused;
-		const compiler::EResult eResult = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters), sResultUnused);
-		if (eResult != compiler::EResult::eOk)
+	
+		const compiler::CResult result = a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, getCompileOptions(a_parameters));
+		if (result.eResult != compiler::EResult::eOk)
 		{
 			// the file doesn't compile at all. That's an error.
 			logger::add(logger::EType::eError, "Abort checking file " + tools::strings::getQuoted(a_compileFile.getFile()) + ". File doesn't compile at all. See errors below.");
 			// we want to let the user know, why the file didn't compile
 			if (!a_parameters.getHasOption(EOption::eCompileLog))
-				a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, { compiler::EOption::eLogErrors }, sResultUnused);
+				a_compiler.run(a_compileFile, compiler::EAction::eReBuild, a_parameters, { compiler::EOption::eLogErrors });
 			return false;		
 		}
 
@@ -108,23 +105,25 @@ namespace compileFile
 		return true;
 	}
 
-	platform::string preProcess(projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
+	std::string preProcess(projectFile::IProject &a_project, const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile)
 	{
 		// now preprocess the file and filter the include files with the result.
 		// we can ignore all includes that are not to be found in the preprocess result.
 		// if this goes wrong somehow, we ignore that and just keep the includes as they are	
-		platform::string sPreProcessResultFile;
+		std::string sPreProcessResult;
 		if (a_project.switchPreProcessOnly(true))
 		{
 
 			if (a_compileFile.addMarkersForPreProcess())
 			{
-				a_compiler.run(a_compileFile, compiler::EAction::ePreCompile, a_parameters, getCompileOptions(a_parameters), sPreProcessResultFile);				
+				const compiler::CResult result = a_compiler.run(a_compileFile, compiler::EAction::ePreCompile, a_parameters, getCompileOptions(a_parameters));
+				if (result.upResultFile)
+					sPreProcessResult = tools::filesystem::readFile(result.upResultFile->getFileName());
 			}
 			a_compileFile.removeMarkersForPreProcess();
 		}
 		a_project.switchPreProcessOnly(false);
-		return sPreProcessResultFile;
+		return sPreProcessResult;
 	}
 	
 	void checkCompileFileIncludes(const compiler::ICompiler &a_compiler, const CParameters &a_parameters, ICompileFile &a_compileFile, std::vector<std::string> &a_rMessages, std::vector<std::string> &a_rCheckedIncludes)
@@ -175,8 +174,8 @@ namespace compileFile
 				{
 					if (!upCompileFile->getIncludes().empty())
 					{
-						auto sPreProcessResultFile = preProcess(*upProject, *upCompiler, a_parameters, *upCompileFile);
-						upCompileFile->filterIncludes(a_includesToIgnore, sPreProcessResultFile);
+						const std::string sPreProcessResult = preProcess(*upProject, *upCompiler, a_parameters, *upCompileFile);
+						upCompileFile->filterIncludes(a_includesToIgnore, sPreProcessResult);
 						if (!upCompileFile->getIncludesToCheck().empty())
 						{
 							std::vector<std::string> warnings, messages, checkedIncludes;

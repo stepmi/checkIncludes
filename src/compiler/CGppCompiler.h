@@ -13,8 +13,8 @@ namespace compiler
 			return ECompilerType::eGpp;
 		}
 
-		compiler::EResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
-			const compiler::OPTIONS &a_options, platform::string &a_rsResultFile) const override;
+		CResult run(const compileFile::ICompileFile &a_compileFile, const compiler::EAction a_eAction, const CParameters &a_parameters, 
+			const compiler::OPTIONS &a_options) const override;
 		std::string getCompileFileFromCommandLine(const compileFile::COMMANDLINE &a_commandline) const override;
 	};
 }

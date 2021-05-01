@@ -25,7 +25,7 @@ namespace compileFile
 		virtual const CInclude *getInclude(const HANDLE_INCLUDE a_hInclude) const = 0;		
 		
 		virtual bool switchInclude(const HANDLE_INCLUDE a_hInclude, const bool a_bSwitchOn) = 0;				
-		virtual void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const platform::string &a_sPreProcessFile) = 0;
+		virtual void filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const std::string &a_sPreProcessResult) = 0;
 
 		// preprocess
 		virtual bool addMarkersForPreProcess() = 0;

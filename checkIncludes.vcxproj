@@ -190,6 +190,7 @@
     <ClCompile Include="src\system\execute.cpp" />
     <ClCompile Include="src\system\exit.cpp" />
     <ClCompile Include="src\system\logger.cpp" />
+    <ClCompile Include="src\tools\CManagedFile.cpp" />
     <ClCompile Include="src\tools\filename.cpp" />
     <ClCompile Include="src\tools\filesystem.cpp" />
     <ClCompile Include="src\tools\strings.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="src\inc\system\execute.h" />
     <ClInclude Include="src\inc\system\exit.h" />
     <ClInclude Include="src\inc\system\logger.h" />
+    <ClInclude Include="src\inc\tools\CManagedFile.h" />
     <ClInclude Include="src\inc\tools\filename.h" />
     <ClInclude Include="src\inc\tools\filesystem.h" />
     <ClInclude Include="src\inc\tools\find.h" />

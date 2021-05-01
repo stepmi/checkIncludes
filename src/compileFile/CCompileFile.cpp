@@ -153,14 +153,14 @@ namespace compileFile
 	}	
 
 	// we don't remove any includes. we just set them to ignore. 
-	void CCompileFile::filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const platform::string &a_sPreProcessFile)
+	void CCompileFile::filterIncludes(INCLUDES_TO_IGNORE &a_includesToIgnore, const std::string &a_sPreProcessResult)
 	{	
 		filterIncludesByIncludesToIgnore(m_sCompileFile, a_includesToIgnore, m_includes);
 
 		// very likely a file which is named the same as the compile file should never be removed.
 		filterIncludesWithCompileFileName(m_sCompileFile, m_includes);
 
-		filterIncludesByPreProcessResult(a_sPreProcessFile, m_includes);
+		filterIncludesByPreProcessResult(a_sPreProcessResult, m_includes);
 	}
 	
 
