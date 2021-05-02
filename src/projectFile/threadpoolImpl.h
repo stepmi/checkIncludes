@@ -23,17 +23,18 @@ namespace threads
 		CThread(CThreadPool &a_threadPool, const size_t a_iId);
 				
 		EState getState() const;
+		size_t getId() const;
 
 		void setJob(std::thread a_thread); // starts a job
 		void join();
 		void setState(const EState a_eState);
-		void setIsFinished() override;
+		void setIsFinished() override;		
 		
 	private:
 		std::thread m_thread;
 		EState m_eState = EState::eHasNoJob;
 		CThreadPool &m_threadPool;
-		const size_t m_iId;
+		size_t m_iId;
 	};
 
 	using THREADS = std::vector<CThread>;	

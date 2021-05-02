@@ -24,6 +24,11 @@ namespace threads
 		return m_eState;
 	}
 
+	size_t CThread::getId() const
+	{
+		return m_iId;
+	}
+
 	void CThread::setJob(std::thread a_thread)
 	{
 		logger::add(logger::EType::eDebugThreads, "CThread setJob : " + tools::strings::itos(m_iId));
@@ -111,7 +116,8 @@ namespace threads
 		if (pThread)
 		{
 			std::thread threadLoc(&compileFile::checkCompileFile, std::ref(*pThread), std::ref(a_parameters), a_CompileFileInfo, std::ref(a_includesToIgnore));
-			pThread->setJob(std::move(threadLoc));
+			pThread->setJob(std::move(threadLoc));			
+			logger::add(logger::EType::eDebugThreads, "CThreadPool addJob " + a_CompileFileInfo.getCompileFile() + " assigned to thread " + tools::strings::itos(pThread->getId()));			
 		}
 
 	}
