@@ -59,6 +59,10 @@ Checks all files of the project, except tools/filesystem.cpp. Use platform x64 a
 
 Checks only tools/filesystem.cpp and tools/strings.cpp.
 
+> checkIncludes -s:CMs*.cpp ../checkIncludes/checkIncludes.vcxproj
+
+Checks only file that start with "CMs".
+
 
 ## Development
 
