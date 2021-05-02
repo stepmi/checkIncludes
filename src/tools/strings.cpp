@@ -71,6 +71,21 @@ namespace tools
 			return src.find(text);
 		}
 
+		// simple and slow pattern matching. inspired by googletest but case insensitive		
+		bool matchPattern(const char *a_sPattern, const char *a_sString) 
+		{
+			if (*a_sPattern == '\0')
+				return *a_sString == '\0';
+			else if (*a_sPattern == '?') // match single character
+				return *a_sString != '\0' && matchPattern(a_sPattern + 1, a_sString + 1);
+			else if (*a_sPattern == '*') // match any string, empty is possible too
+				return (*a_sString != '\0' && matchPattern(a_sPattern, a_sString + 1)) ||
+						matchPattern(a_sPattern + 1, a_sString);
+			else
+				return compareCaseInsensitive(*a_sPattern, *a_sString) &&
+						matchPattern(a_sPattern + 1, a_sString + 1);
+		}
+		
 		bool beginsWithCaseInsensitive(const std::string &a_sSrc, const std::string &a_sText)
 		{
 			if (a_sText.size() <= a_sSrc.size())
@@ -108,7 +123,7 @@ namespace tools
 			sFileProvidedByUser.make_preferred();
 			if (!sFileProvidedByUser.has_parent_path())
 				sFileFromProject = sFileFromProject.filename();
-			return compareCaseInsensitive(sFileFromProject, sFileProvidedByUser);
+			return matchPattern(sFileProvidedByUser.string().c_str(), sFileFromProject.string().c_str());
 		}
 
 		
