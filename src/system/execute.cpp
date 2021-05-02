@@ -109,15 +109,22 @@ namespace execute
 		ZeroMemory(&sinfo, sizeof(STARTUPINFO));
 		ZeroMemory(&pinfo, sizeof(PROCESS_INFORMATION));
 		sinfo.cb = sizeof(STARTUPINFOW);
+		bool bInheritHandles = false;
 		if (a_pTempFile)
 		{
 			sinfo.dwFlags |= STARTF_USESTDHANDLES;
 			sinfo.hStdInput = INVALID_HANDLE_VALUE;
 			sinfo.hStdError = a_pTempFile->getHandle();
 			sinfo.hStdOutput = a_pTempFile->getHandle();
+			// Be very careful with bInheritHandles. 
+			// I don't fully understand the purpose, but it seems like the parent process inherits handles of files created by the child process.
+			// So maybe we'd have to close such inherited file handles.
+			// Resulting problems: msvc-compiler couldn't access some files created by a former build process.
+			// For the moment we just don't use it when calling the compiler.
+			bInheritHandles = true; 
 		}
 
-		if (CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, true, 0, nullptr, a_sWorkingDir.string().c_str(), &sinfo, &pinfo))
+		if (CreateProcessA(NULL, upCommandLine.get(), nullptr, nullptr, bInheritHandles, 0, nullptr, a_sWorkingDir.string().c_str(), &sinfo, &pinfo))
 		{
 			WaitForSingleObject(pinfo.hProcess, INFINITE);  // wait for process to end
 			DWORD dwExitCode = 0;
