@@ -33,7 +33,7 @@ namespace tools
 		bool removeAll(const platform::string &a_wsPath)
 		{
 			std::error_code errorCode;
-			return std::filesystem::remove_all(a_wsPath, errorCode);
+			return std::filesystem::remove_all(a_wsPath, errorCode) > 0;				
 		}
 
 		bool copyFile(const platform::string &a_wsSrc, const platform::string &a_wsDest)
