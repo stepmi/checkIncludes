@@ -43,7 +43,7 @@ Option | Explanation
 -l:f   | logging, show all processed files
 -l:i   | logging, show checked includes for all processed files
 -l:c   | logging, show command lines for all processed files
--l:r   | logging, show compiler output - this produces a lot of output
+-l:o   | logging, show compiler output - this produces a lot of output
 
 ### examples:
 

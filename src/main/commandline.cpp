@@ -18,7 +18,7 @@ void printHelp()
 		"   -l:f    logging, show all processed files",
 		"   -l:i    logging, show checked includes for all processed files",
 		"   -l:c    logging, show command lines for all processed files",
-		"   -l:r    logging, show compiler output - this produces a lot of output",		
+		"   -l:o    logging, show compiler output - this produces a lot of output",		
 		"   -h      print help text",
 		
 		"example:",
@@ -95,7 +95,7 @@ bool parseArgument(const std::string &a_sArgument, CParameters &a_parameters)
 			logger::allowType(logger::EType::eCommandLines);
 		else if (tools::strings::compareCaseInsensitive(cOption, 't'))
 			logger::allowType(logger::EType::eDebugThreads); // this isn't documented.	
-		else if (tools::strings::compareCaseInsensitive(cOption, 'r'))
+		else if (tools::strings::compareCaseInsensitive(cOption, 'o'))
 			a_parameters.addOption(EOption::eCompileLog);
 		else		
 			bArgumentOK = false;
